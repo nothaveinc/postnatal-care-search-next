@@ -1,0 +1,221 @@
+/* ── 共通アニメーション ── */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.fade-in-up {
+  animation: fade-in-up 0.4s ease;
+}
+
+/* ── 共通サブページスタイル ── */
+.subpage-hero {
+  background: linear-gradient(135deg, #fdf6f8 0%, #f8f4f0 100%);
+  padding: 120px 0 48px;
+}
+.breadcrumb ol {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  font-size: 14px;
+  color: var(--color-text-light, #9B9FBF);
+}
+.breadcrumb ol li + li::before { content: "/"; margin-right: 8px; }
+.breadcrumb a { color: var(--color-primary, #E8A5B0); text-decoration: none; }
+.subpage-hero__title {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 5vw, 42px);
+  color: #2D3142;
+  margin: 0;
+}
+.subpage-main { padding: 64px 0 96px; }
+
+/* ── 法的ページ ── */
+.legal-content { max-width: 860px; margin: 0 auto; }
+.legal-content h2 { font-size: 22px; color: #2D3142; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #E8A5B0; }
+.legal-content h3 { font-size: 17px; color: #2D3142; margin: 32px 0 12px; }
+.legal-content p { color: #5C6280; line-height: 1.9; margin-bottom: 16px; }
+.legal-content ul { color: #5C6280; line-height: 1.9; padding-left: 24px; margin-bottom: 16px; }
+.legal-content table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 14px; }
+.legal-content table th, .legal-content table td { padding: 12px 16px; border: 1px solid #e8e8ec; text-align: left; }
+.legal-content table th { background: #fdf6f8; color: #2D3142; font-weight: 600; width: 200px; }
+.legal-content table td { color: #5C6280; }
+.legal-updated { color: #9B9FBF; font-size: 14px; margin-bottom: 32px; }
+.legal-link { color: #E8A5B0; }
+.legal-link--strong { color: #E8A5B0; font-weight: 500; }
+
+/* ── 特定商取引法 ── */
+.tokutei-note {
+  background: #fdf6f8;
+  border-left: 4px solid #E8A5B0;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 32px;
+}
+.tokutei-note p { margin-bottom: 0; font-size: 14px; }
+
+/* ── FAQ アコーディオン ── */
+.faq-category { margin-bottom: 48px; }
+.faq-category__title {
+  font-size: 20px;
+  color: #E8A5B0;
+  border-left: 4px solid #E8A5B0;
+  padding-left: 12px;
+  margin-bottom: 16px;
+}
+.faq-item {
+  border: 1px solid #f0e8ec;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.faq-question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  border: none;
+  padding: 20px 24px;
+  cursor: pointer;
+  background: #fff;
+  font-weight: 500;
+  color: #2D3142;
+}
+.faq-question:hover { background: #fdf6f8; }
+.faq-icon {
+  font-size: 20px;
+  transition: transform 0.3s;
+  flex-shrink: 0;
+}
+.faq-item.is-open .faq-icon { transform: rotate(45deg); }
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+.faq-answer__inner {
+  padding: 0 24px 20px;
+  color: #5C6280;
+  line-height: 1.8;
+}
+.faq-item.is-open .faq-answer { max-height: 500px; }
+.faq-contact-cta {
+  text-align: center;
+  padding: 48px 0 0;
+  border-top: 1px solid #f0e8ec;
+}
+.faq-contact-cta p { color: #5C6280; margin-bottom: 24px; }
+
+/* ── お問い合わせ ── */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 48px;
+}
+@media (max-width: 768px) {
+  .contact-grid { grid-template-columns: 1fr; }
+}
+.contact-info {
+  background: #fdf6f8;
+  border-radius: 16px;
+  padding: 32px;
+}
+.contact-info h3 {
+  font-size: 18px;
+  margin-bottom: 16px;
+  color: #2D3142;
+}
+.quick-links {
+  list-style: none;
+  padding: 0;
+}
+.quick-links li { margin-bottom: 8px; }
+.quick-links a {
+  color: #E8A5B0;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  transition: color 0.3s;
+}
+.quick-links a:hover { color: #C4738A; }
+.quick-links a::before { content: "→"; }
+.contact-info__note {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #f0e8ec;
+  font-size: 0.82rem;
+  color: #9B9FBF;
+  line-height: 1.7;
+}
+.contact-form-wrap {
+  background: #fff;
+  border-radius: 16px;
+  padding: 40px;
+  border: 1px solid #f0e8ec;
+  box-shadow: 0 4px 16px rgba(45, 49, 66, 0.06);
+}
+@media (max-width: 600px) {
+  .contact-form-wrap { padding: 24px 20px; }
+}
+.form-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid var(--color-surface2, #F8F4F0);
+  border-radius: 12px;
+  background: #fff;
+  color: #2D3142;
+  font-size: 0.9rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 140px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.form-textarea:hover { border-color: rgba(232, 165, 176, 0.5); }
+.form-textarea:focus {
+  outline: none;
+  border-color: #C4738A;
+  box-shadow: 0 0 0 3px rgba(196, 115, 138, 0.15);
+}
+.form-textarea::placeholder { color: #9B9FBF; }
+.form-checkbox-wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+.form-checkbox-wrap input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  accent-color: #C4738A;
+  cursor: pointer;
+}
+.form-checkbox-wrap span {
+  font-size: 0.88rem;
+  color: #5C6280;
+  line-height: 1.6;
+}
+.form-checkbox-wrap a {
+  color: #E8A5B0;
+  text-decoration: underline;
+}
+.form-error-text {
+  font-size: 0.78rem;
+  color: #c0374a;
+  margin-top: 4px;
+  display: none;
+}
+.form-error-text.is-visible { display: block; }
+.form-input--error { border-color: #e53935 !important; box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.12) !important; }
+.form-textarea--error { border-color: #e53935 !important; box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.12) !important; }

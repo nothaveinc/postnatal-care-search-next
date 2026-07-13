@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>産後ケアナビ｜産後のあなたへ、最適なケアを。</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary:#E8A5B0;
+    --accent:#C4738A;
+    --text:#2D3142;
+    --sub:#5C6280;
+    --bg:#fdf6f8;
+    --bg2:#F8F4F0;
+    --white:#ffffff;
+    --line:#f0dde2;
+    --radius:20px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    font-family:'Noto Sans JP',sans-serif;
+    color:var(--text);
+    background:var(--bg);
+    line-height:1.7;
+    font-size:15px;
+  }
+  h1,h2,h3{font-family:'Noto Serif JP',serif;}
+
+  /* ===== Layout ===== */
+  .app{
+    display:grid;
+    grid-template-columns:260px minmax(0,640px) 320px;
+    gap:28px;
+    max-width:1280px;
+    margin:0 auto;
+    padding:0 20px;
+  }
+
+  /* ===== Left sidebar ===== */
+  .sidebar{
+    position:sticky;
+    top:0;
+    height:100vh;
+    padding:24px 0;
+    display:flex;
+    flex-direction:column;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:8px 14px 22px;
+  }
+  .brand-mark{
+    width:42px;height:42px;flex:0 0 42px;
+    border-radius:14px;
+    background:linear-gradient(135deg,var(--primary),var(--accent));
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;
+    box-shadow:0 4px 12px rgba(196,115,138,.28);
+  }
+  .brand-mark svg{width:22px;height:22px;}
+  .brand-name{
+    font-family:'Noto Serif JP',serif;
+    font-size:19px;font-weight:700;letter-spacing:.04em;
+  }
+  .brand-tag{font-size:10.5px;color:var(--sub);letter-spacing:.02em;}
+  .nav{display:flex;flex-direction:column;gap:6px;}
+  .nav-item{
+    display:flex;align-items:center;gap:14px;
+    padding:12px 16px;
+    border-radius:999px;
+    font-size:15.5px;font-weight:500;
+    color:var(--text);
+    background:transparent;border:none;cursor:pointer;
+    font-family:inherit;
+    transition:background .18s,color .18s;
+    text-align:left;
+    width:100%;
+  }
+  .nav-item svg{width:23px;height:23px;flex:0 0 23px;stroke:currentColor;}
+  .nav-item:hover{background:#f7e3e8;}
+  .nav-item.active{
+    background:var(--white);
+    color:var(--accent);
+    font-weight:700;
+    box-shadow:0 2px 10px rgba(196,115,138,.12);
+  }
+  .nav-cta{
+    margin-top:22px;
+    background:linear-gradient(135deg,var(--primary),var(--accent));
+    color:#fff;border:none;cursor:pointer;
+    font-family:inherit;font-size:15px;font-weight:700;
+    padding:14px;border-radius:999px;
+    box-shadow:0 6px 16px rgba(196,115,138,.32);
+    transition:transform .15s,box-shadow .15s;
+  }
+  .nav-cta:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(196,115,138,.4);}
+  .sidebar-foot{
+    margin-top:auto;
+    padding:14px 16px 0;
+    font-size:11.5px;color:var(--sub);
+  }
+
+  /* ===== Main column ===== */
+  .main{
+    min-height:100vh;
+    border-left:1px solid var(--line);
+    border-right:1px solid var(--line);
+    background:rgba(255,255,255,.55);
+  }
+  .main-header{
+    position:sticky;top:0;z-index:10;
+    backdrop-filter:blur(10px);
+    background:rgba(253,246,248,.85);
+    border-bottom:1px solid var(--line);
+    padding:16px 24px 14px;
+  }
+  .main-header h1{font-size:19px;font-weight:700;letter-spacing:.03em;}
+  .main-header p{font-size:12.5px;color:var(--sub);margin-top:2px;}
+  .panel{display:none;padding:20px 24px 60px;}
+  .panel.active{display:block;animation:fadeUp .28s ease;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+  /* hero */
+  .hero{
+    background:linear-gradient(135deg,#fceef1,var(--bg2));
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:30px 28px;
+    margin-bottom:22px;
+  }
+  .hero h2{font-size:23px;font-weight:700;line-height:1.5;letter-spacing:.03em;}
+  .hero h2 span{color:var(--accent);}
+  .hero p{color:var(--sub);font-size:13.5px;margin-top:8px;}
+  .hero-actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
+  .btn{
+    display:inline-flex;align-items:center;gap:7px;
+    border-radius:999px;padding:10px 20px;
+    font-family:inherit;font-size:13.5px;font-weight:700;
+    cursor:pointer;border:none;transition:opacity .15s,transform .15s;
+  }
+  .btn:hover{opacity:.88;transform:translateY(-1px);}
+  .btn-primary{background:var(--accent);color:#fff;box-shadow:0 4px 12px rgba(196,115,138,.3);}
+  .btn-ghost{background:var(--white);color:var(--accent);border:1.5px solid var(--primary);}
+
+  /* search bar */
+  .searchbar{
+    display:flex;align-items:center;gap:10px;
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:12px 20px;
+    margin-bottom:20px;
+    color:var(--sub);font-size:14px;
+    box-shadow:0 2px 8px rgba(45,49,66,.04);
+  }
+  .searchbar svg{width:18px;height:18px;stroke:var(--accent);flex:0 0 18px;}
+
+  /* filter chips */
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+  .chip{
+    font-size:12.5px;font-weight:500;
+    padding:7px 16px;border-radius:999px;
+    background:var(--white);border:1px solid var(--line);
+    color:var(--sub);cursor:pointer;font-family:inherit;
+    transition:all .15s;
+  }
+  .chip:hover{border-color:var(--primary);color:var(--accent);}
+  .chip.on{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:700;}
+
+  /* facility cards */
+  .feed{display:flex;flex-direction:column;gap:16px;}
+  .card{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:22px 24px;
+    box-shadow:0 2px 10px rgba(45,49,66,.04);
+    transition:box-shadow .2s,transform .2s;
+  }
+  .card:hover{box-shadow:0 8px 24px rgba(196,115,138,.14);transform:translateY(-2px);}
+  .card-top{display:flex;align-items:flex-start;gap:14px;}
+  .card-thumb{
+    width:56px;height:56px;flex:0 0 56px;border-radius:16px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:24px;
+    background:linear-gradient(135deg,#fceef1,#f7e3e8);
+    border:1px solid var(--line);
+  }
+  .card-head{flex:1;min-width:0;}
+  .card-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .card h3{font-size:16.5px;font-weight:700;}
+  .badge{
+    font-size:11px;font-weight:700;letter-spacing:.04em;
+    padding:3px 11px;border-radius:999px;color:#fff;
+  }
+  .badge.stay{background:var(--accent);}
+  .badge.day{background:#8fae9a;}
+  .badge.visit{background:#9a8fc0;}
+  .card-loc{font-size:12.5px;color:var(--sub);margin-top:3px;display:flex;align-items:center;gap:5px;}
+  .card-loc svg{width:13px;height:13px;stroke:var(--sub);}
+  .card-desc{font-size:13px;color:var(--sub);margin:12px 0 14px;}
+  .card-meta{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:12px;flex-wrap:wrap;
+    border-top:1px dashed var(--line);
+    padding-top:13px;
+  }
+  .stars{color:#e8b64c;font-size:13px;letter-spacing:1px;}
+  .rating-num{font-weight:700;font-size:13.5px;margin-left:5px;}
+  .rating-count{font-size:11.5px;color:var(--sub);margin-left:3px;}
+  .price{font-size:12.5px;color:var(--sub);}
+  .price strong{color:var(--accent);font-size:16px;font-weight:700;}
+  .card-link{
+    font-size:12.5px;font-weight:700;color:var(--accent);
+    background:none;border:none;cursor:pointer;font-family:inherit;
+    display:inline-flex;align-items:center;gap:4px;
+  }
+  .card-link:hover{text-decoration:underline;}
+
+  /* simulator panel */
+  .sim-box{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:26px;
+  }
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-size:13px;font-weight:700;margin-bottom:7px;}
+  .field label small{font-weight:400;color:var(--sub);margin-left:6px;}
+  .field select,.field input{
+    width:100%;
+    padding:12px 14px;
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    font-family:inherit;font-size:14px;color:var(--text);
+    background:var(--bg2);
+    outline:none;transition:border .15s;
+    appearance:none;
+  }
+  .field select:focus,.field input:focus{border-color:var(--primary);background:#fff;}
+  .seg{display:flex;gap:8px;}
+  .seg button{
+    flex:1;padding:11px 6px;
+    border:1.5px solid var(--line);border-radius:12px;
+    background:var(--bg2);font-family:inherit;font-size:13px;font-weight:500;
+    color:var(--sub);cursor:pointer;transition:all .15s;
+  }
+  .seg button.on{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:700;}
+  .sim-result{
+    margin-top:22px;
+    background:linear-gradient(135deg,#fceef1,var(--bg2));
+    border:1px dashed var(--primary);
+    border-radius:16px;
+    padding:20px;text-align:center;
+  }
+  .sim-result .label{font-size:12px;color:var(--sub);}
+  .sim-result .amount{
+    font-family:'Noto Serif JP',serif;
+    font-size:30px;font-weight:700;color:var(--accent);
+    line-height:1.4;
+  }
+  .sim-result .amount small{font-size:14px;}
+  .sim-note{font-size:11px;color:var(--sub);margin-top:10px;}
+
+  /* FAQ */
+  .faq-item{
+    background:var(--white);border:1px solid var(--line);
+    border-radius:16px;padding:18px 22px;margin-bottom:12px;
+  }
+  .faq-q{display:flex;gap:12px;font-weight:700;font-size:14.5px;}
+  .faq-q::before{content:"Q";flex:0 0 auto;color:var(--accent);font-family:'Noto Serif JP',serif;font-size:17px;}
+  .faq-a{display:flex;gap:12px;margin-top:10px;font-size:13.5px;color:var(--sub);}
+  .faq-a::before{content:"A";flex:0 0 auto;color:#8fae9a;font-family:'Noto Serif JP',serif;font-size:17px;font-weight:700;}
+
+  /* contact */
+  .field textarea{
+    width:100%;min-height:130px;resize:vertical;
+    padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;
+    font-family:inherit;font-size:14px;background:var(--bg2);outline:none;
+  }
+  .field textarea:focus{border-color:var(--primary);background:#fff;}
+
+  /* ===== Right column ===== */
+  .aside{
+    position:sticky;top:0;height:100vh;overflow-y:auto;
+    padding:24px 0 40px;
+    display:flex;flex-direction:column;gap:20px;
+    scrollbar-width:none;
+  }
+  .aside::-webkit-scrollbar{display:none;}
+  .widget{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px 22px;
+    box-shadow:0 2px 10px rgba(45,49,66,.04);
+  }
+  .widget h3{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+  .widget h3 .dot{width:8px;height:8px;border-radius:50%;background:var(--primary);}
+  .mini-row{display:flex;gap:8px;margin-bottom:10px;}
+  .mini-row select{
+    flex:1;padding:9px 10px;font-size:12.5px;
+    border:1.5px solid var(--line);border-radius:10px;
+    background:var(--bg2);font-family:inherit;color:var(--text);outline:none;
+  }
+  .mini-result{
+    background:var(--bg);border-radius:12px;padding:12px;text-align:center;
+    font-size:12px;color:var(--sub);margin:12px 0;
+  }
+  .mini-result strong{
+    display:block;font-family:'Noto Serif JP',serif;
+    font-size:21px;color:var(--accent);
+  }
+  .widget .btn{width:100%;justify-content:center;}
+  .rank{list-style:none;}
+  .rank li{
+    display:flex;align-items:center;gap:12px;
+    padding:11px 0;border-bottom:1px solid var(--bg2);
+    cursor:pointer;
+  }
+  .rank li:last-child{border-bottom:none;}
+  .rank li:hover .rank-name{color:var(--accent);}
+  .rank-no{
+    font-family:'Noto Serif JP',serif;font-weight:700;font-size:16px;
+    color:var(--primary);width:20px;text-align:center;flex:0 0 20px;
+  }
+  .rank li:first-child .rank-no{color:var(--accent);}
+  .rank-name{font-size:13px;font-weight:700;transition:color .15s;}
+  .rank-sub{font-size:11px;color:var(--sub);}
+  .tip{font-size:12.5px;color:var(--sub);line-height:1.8;}
+  .tip strong{color:var(--accent);}
+
+  /* ===== Responsive ===== */
+  @media (max-width:1180px){
+    .app{grid-template-columns:250px minmax(0,1fr);}
+    .aside{display:none;}
+  }
+  @media (max-width:1024px){
+    .app{grid-template-columns:76px minmax(0,1fr);gap:16px;padding:0 12px;}
+    .brand-name,.brand-tag,.nav-item span,.sidebar-foot{display:none;}
+    .brand{justify-content:center;padding:8px 0 22px;}
+    .nav-item{justify-content:center;padding:13px;}
+    .nav-cta{
+      font-size:0;padding:14px;
+      position:relative;
+    }
+    .nav-cta::after{content:"探";font-size:15px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ========== LEFT SIDEBAR ========== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C8 17.5 4 14 4 9.5A4.5 4.5 0 0 1 12 6.7a4.5 4.5 0 0 1 8 2.8c0 4.5-4 8-8 11.5z"/></svg>
+      </div>
+      <div>
+        <div class="brand-name">産後ケアナビ</div>
+        <div class="brand-tag">産後のあなたへ、最適なケアを。</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-item active" data-panel="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg>
+        <span>ホーム</span>
+      </button>
+      <button class="nav-item" data-panel="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>施設を探す</span>
+      </button>
+      <button class="nav-item" data-panel="sim">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8"/><path d="M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h.01M12 19h.01M16 19h.01"/></svg>
+        <span>公費シミュレーター</span>
+      </button>
+      <button class="nav-item" data-panel="faq">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 .3c0 1.7-2.5 2.2-2.5 3.7"/><path d="M12 17h.01"/></svg>
+        <span>よくある質問</span>
+      </button>
+      <button class="nav-item" data-panel="contact">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        <span>お問い合わせ</span>
+      </button>
+    </nav>
+
+    <button class="nav-cta" data-panel="search" id="ctaBtn"><span>近くの施設を探す</span></button>
+
+    <div class="sidebar-foot">
+      © 2026 産後ケアナビ<br>
+      掲載情報は各自治体の最新情報をご確認ください。
+    </div>
+  </aside>
+
+  <!-- ========== MAIN COLUMN ========== -->
+  <main class="main">
+    <header class="main-header">
+      <h1 id="headerTitle">ホーム</h1>
+      <p id="headerSub">産後のあなたへ、最適なケアを。</p>
+    </header>
+
+    <!-- HOME -->
+    <section class="panel active" id="panel-home">
+      <div class="hero">
+        <h2>がんばりすぎない産後を、<br><span>いっしょに</span>見つけましょう。</h2>
+        <p>産後ケアナビは、宿泊型・通所型・訪問型の産後ケア施設を横断検索できるサービスです。お住まいの自治体の公費助成もかんたんにシミュレーションできます。</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" data-panel="search">施設を探す</button>
+          <button class="btn btn-ghost" data-panel="sim">公費助成を調べる</button>
+        </div>
+      </div>
+
+      <div class="chips">
+        <button class="chip on">すべて</button>
+        <button class="chip">宿泊型</button>
+        <button class="chip">通所型</button>
+        <button class="chip">訪問型</button>
+        <button class="chip">空きあり</button>
+        <button class="chip">公費対象</button>
+      </div>
+
+      <div class="feed" id="homeFeed"></div>
+    </section>
+
+    <!-- SEARCH -->
+    <section class="panel" id="panel-search">
+      <div class="searchbar">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        エリア・施設名で検索（例：世田谷区　宿泊型）
+      </div>
+      <div class="chips">
+        <button class="chip on">すべて</button>
+        <button class="chip">宿泊型</button>
+        <button class="chip">通所型</button>
+        <button class="chip">訪問型</button>
+        <button class="chip">評価4.5以上</button>
+        <button class="chip">駅チカ</button>
+      </div>
+      <div class="feed" id="searchFeed"></div>
+    </section>
+
+    <!-- SIMULATOR -->
+    <section class="panel" id="panel-sim">
+      <div class="sim-box">
+        <div class="field">
+          <label>お住まいの自治体</label>
+          <select><option>東京都 世田谷区</option><option>東京都 杉並区</option><option>神奈川県 横浜市</option><option>その他の自治体</option></select>
+        </div>
+        <div class="field">
+          <label>利用したいケアの種別</label>
+          <div class="seg" id="simSeg">
+            <button class="on">宿泊型</button>
+            <button>通所型</button>
+            <button>訪問型</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>利用予定日数<small>（1〜7日）</small></label>
+          <input type="number" value="3" min="1" max="7">
+        </div>
+        <div class="field">
+          <label>お子さまの月齢</label>
+          <select><option>生後0〜2か月</option><option>生後3〜4か月</option><option>生後5〜6か月</option><option>生後7か月以降</option></select>
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;">助成額を計算する</button>
+
+        <div class="sim-result">
+          <div class="label">自己負担額の目安（3日間利用の場合）</div>
+          <div class="amount">9,000<small>円〜</small></div>
+          <div class="sim-note">※ 世田谷区の宿泊型は1日あたり最大30,000円の助成が受けられます（住民税非課税世帯はさらに減免あり）。実際の金額は自治体・施設により異なります。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="panel" id="panel-faq">
+      <div class="faq-item">
+        <div class="faq-q">産後ケアはいつから、いつまで利用できますか？</div>
+        <div class="faq-a">多くの自治体では、退院直後から生後4か月頃まで（一部は1歳まで）利用できます。里帰り先の自治体で利用できる場合もあります。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">公費助成を受けるには何が必要ですか？</div>
+        <div class="faq-a">お住まいの自治体への事前申請が必要な場合がほとんどです。母子健康手帳をご用意のうえ、妊娠中からの申請をおすすめします。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">宿泊型・通所型・訪問型の違いは？</div>
+        <div class="faq-a">宿泊型は施設に泊まって休息とケアを受けられます。通所型は日帰りで授乳相談や休息を、訪問型は助産師がご自宅に伺ってケアを行います。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">赤ちゃんを預けて休むことはできますか？</div>
+        <div class="faq-a">はい。多くの宿泊型・通所型施設では、スタッフがお預かりしている間にお母さまがゆっくり休める時間を設けています。</div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="panel" id="panel-contact">
+      <div class="sim-box">
+        <div class="field">
+          <label>お名前</label>
+          <input type="text" placeholder="例：山田 花子">
+        </div>
+        <div class="field">
+          <label>メールアドレス</label>
+          <input type="email" placeholder="例：hanako@example.com">
+        </div>
+        <div class="field">
+          <label>お問い合わせ内容</label>
+          <textarea placeholder="施設の掲載依頼、助成情報の修正依頼などお気軽にお寄せください。"></textarea>
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;">送信する</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========== RIGHT COLUMN ========== -->
+  <aside class="aside">
+    <div class="widget">
+      <h3><span class="dot"></span>かんたん公費シミュレーター</h3>
+      <div class="mini-row">
+        <select><option>世田谷区</option><option>杉並区</option><option>横浜市</option></select>
+        <select><option>宿泊型</option><option>通所型</option><option>訪問型</option></select>
+      </div>
+      <div class="mini-result">
+        自己負担の目安<strong>3,000円/日〜</strong>
+      </div>
+      <button class="btn btn-primary" data-panel="sim">くわしく計算する</button>
+    </div>
+
+    <div class="widget">
+      <h3><span class="dot"></span>人気の施設ランキング</h3>
+      <ol class="rank">
+        <li><span class="rank-no">1</span><div><div class="rank-name">まどか助産院 産後ケアルーム</div><div class="rank-sub">宿泊型・世田谷区 ★4.9</div></div></li>
+        <li><span class="rank-no">2</span><div><div class="rank-name">ひだまり産後ケアセンター</div><div class="rank-sub">通所型・杉並区 ★4.8</div></div></li>
+        <li><span class="rank-no">3</span><div><div class="rank-name">みなとレディースクリニック</div><div class="rank-sub">宿泊型・横浜市 ★4.7</div></div></li>
+        <li><span class="rank-no">4</span><div><div class="rank-name">こもれび訪問助産ステーション</div><div class="rank-sub">訪問型・川崎市 ★4.7</div></div></li>
+      </ol>
+    </div>
+
+    <div class="widget">
+      <h3><span class="dot"></span>今週のケア豆知識</h3>
+      <p class="tip">
+        産後ケアの公費助成は<strong>妊娠中から申請できる</strong>自治体が増えています。出産前に登録しておくと、退院後すぐに利用できて安心です。
+      </p>
+    </div>
+  </aside>
+</div>
+
+<script>
+  /* ---------- facility data ---------- */
+  const facilities = [
+    {
+      name:"まどか助産院 産後ケアルーム",
+      type:"stay", typeLabel:"宿泊型",
+      loc:"東京都世田谷区・三軒茶屋駅 徒歩6分",
+      desc:"助産師が24時間常駐。赤ちゃんをお預かりしている間、個室でゆっくりお休みいただけます。母乳相談・沐浴指導つき。",
+      rating:4.9, count:128, price:"公費利用で 3,000円/泊〜",
+      emoji:"🌸"
+    },
+    {
+      name:"ひだまり産後ケアセンター",
+      type:"day", typeLabel:"通所型",
+      loc:"東京都杉並区・荻窪駅 徒歩4分",
+      desc:"日帰りで授乳相談・骨盤ケア・昼食つきの休息プランをご用意。きょうだい連れの利用もご相談いただけます。",
+      rating:4.8, count:96, price:"公費利用で 2,000円/日〜",
+      emoji:"☀️"
+    },
+    {
+      name:"こもれび訪問助産ステーション",
+      type:"visit", typeLabel:"訪問型",
+      loc:"神奈川県川崎市・対応エリア広め",
+      desc:"経験豊富な助産師がご自宅へ。授乳・沐浴・育児相談のほか、上のお子さまがいるご家庭のケアも得意です。",
+      rating:4.7, count:74, price:"公費利用で 1,500円/回〜",
+      emoji:"🏠"
+    },
+    {
+      name:"みなとレディースクリニック 産後ケア",
+      type:"stay", typeLabel:"宿泊型",
+      loc:"神奈川県横浜市・みなとみらい駅 徒歩8分",
+      desc:"医療機関併設で、産後の体調に不安がある方も安心。夜間の授乳サポートと栄養バランスの整ったお食事が好評です。",
+      rating:4.7, count:152, price:"公費利用で 6,000円/泊〜",
+      emoji:"🏥"
+    },
+    {
+      name:"ゆりかご産後デイケア",
+      type:"day", typeLabel:"通所型",
+      loc:"東京都目黒区・中目黒駅 徒歩5分",
+      desc:"半日から利用できる気軽さが人気。アロマトリートメントのオプションで、心と体をゆっくりほぐせます。",
+      rating:4.6, count:61, price:"公費利用で 2,500円/日〜",
+      emoji:"🕊️"
+    },
+    {
+      name:"すこやか母子サポート訪問ケア",
+      type:"visit", typeLabel:"訪問型",
+      loc:"東京都大田区・区内全域対応",
+      desc:"夜間・早朝の訪問にも対応。双子・多胎児のケア実績が豊富で、退院直後のご家庭から選ばれています。",
+      rating:4.5, count:43, price:"公費利用で 1,000円/回〜",
+      emoji:"🤱"
+    }
+  ];
+
+  const starStr = r => "★".repeat(Math.round(r)) + "☆".repeat(5 - Math.round(r));
+
+  function cardHTML(f){
+    return `
+    <article class="card">
+      <div class="card-top">
+        <div class="card-thumb">${f.emoji}</div>
+        <div class="card-head">
+          <div class="card-title-row">
+            <h3>${f.name}</h3>
+            <span class="badge ${f.type}">${f.typeLabel}</span>
+          </div>
+          <div class="card-loc">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            ${f.loc}
+          </div>
+        </div>
+      </div>
+      <p class="card-desc">${f.desc}</p>
+      <div class="card-meta">
+        <div><span class="stars">${starStr(f.rating)}</span><span class="rating-num">${f.rating}</span><span class="rating-count">(${f.count}件)</span></div>
+        <div class="price"><strong>${f.price.split(" ")[1]}</strong></div>
+        <button class="card-link">くわしく見る →</button>
+      </div>
+    </article>`;
+  }
+
+  document.getElementById("homeFeed").innerHTML   = facilities.slice(0,4).map(cardHTML).join("");
+  document.getElementById("searchFeed").innerHTML = facilities.map(cardHTML).join("");
+
+  /* ---------- SPA tab switching ---------- */
+  const headers = {
+    home:    ["ホーム","産後のあなたへ、最適なケアを。"],
+    search:  ["施設を探す","宿泊型・通所型・訪問型から選べます"],
+    sim:     ["公費シミュレーター","お住まいの自治体の助成額を確認"],
+    faq:     ["よくある質問","産後ケアの疑問にお答えします"],
+    contact: ["お問い合わせ","2営業日以内にご返信します"]
+  };
+
+  function switchPanel(key){
+    document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active", p.id === "panel-"+key));
+    document.querySelectorAll(".nav-item").forEach(n=>n.classList.toggle("active", n.dataset.panel === key));
+    document.getElementById("headerTitle").textContent = headers[key][0];
+    document.getElementById("headerSub").textContent   = headers[key][1];
+    document.querySelector(".main").scrollIntoView({behavior:"smooth", block:"start"});
+  }
+
+  document.querySelectorAll("[data-panel]").forEach(el=>{
+    el.addEventListener("click", ()=>switchPanel(el.dataset.panel));
+  });
+
+  /* filter chips (visual toggle only) */
+  document.querySelectorAll(".chips").forEach(group=>{
+    group.querySelectorAll(".chip").forEach(chip=>{
+      chip.addEventListener("click", ()=>{
+        group.querySelectorAll(".chip").forEach(c=>c.classList.remove("on"));
+        chip.classList.add("on");
+      });
+    });
+  });
+
+  /* simulator segment toggle */
+  document.querySelectorAll("#simSeg button").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      document.querySelectorAll("#simSeg button").forEach(x=>x.classList.remove("on"));
+      b.classList.add("on");
+    });
+  });
+</script>
+</body>
+</html>

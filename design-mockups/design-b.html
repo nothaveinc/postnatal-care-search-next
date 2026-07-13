@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>産後ケアナビ｜施設を探す</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary:#E8A5B0;
+    --accent:#C4738A;
+    --text:#2D3142;
+    --subtext:#5C6280;
+    --bg:#fdf6f8;
+    --bg2:#F8F4F0;
+    --white:#ffffff;
+    --line:#f0dde2;
+    --shadow:0 4px 16px rgba(196,115,138,.10);
+    --radius:16px;
+    --sidebar-w:296px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Noto Sans JP',sans-serif;
+    color:var(--text);
+    background:var(--bg);
+    line-height:1.7;
+    font-size:15px;
+  }
+  h1,h2,h3{font-family:'Noto Serif JP',serif;}
+  button{font-family:inherit;cursor:pointer;}
+
+  /* ===== Layout ===== */
+  .layout{display:flex;min-height:100vh;}
+
+  /* ===== Sidebar ===== */
+  .sidebar{
+    width:var(--sidebar-w);
+    background:var(--white);
+    border-right:1px solid var(--line);
+    position:fixed;
+    top:0;left:0;bottom:0;
+    overflow-y:auto;
+    padding:28px 22px 40px;
+    z-index:100;
+    scrollbar-width:thin;
+    scrollbar-color:var(--primary) transparent;
+  }
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+  .brand-mark{
+    width:42px;height:42px;border-radius:14px;
+    background:linear-gradient(135deg,var(--primary),var(--accent));
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:20px;flex-shrink:0;
+    box-shadow:var(--shadow);
+  }
+  .brand-name{font-family:'Noto Serif JP',serif;font-size:19px;font-weight:700;letter-spacing:.04em;}
+  .brand-tagline{font-size:11px;color:var(--subtext);margin-bottom:22px;letter-spacing:.05em;}
+
+  .nav{display:flex;flex-direction:column;gap:4px;margin-bottom:26px;}
+  .nav a{
+    display:flex;align-items:center;gap:10px;
+    padding:10px 12px;border-radius:12px;
+    color:var(--subtext);text-decoration:none;font-weight:500;font-size:14px;
+    transition:background .2s,color .2s;
+  }
+  .nav a .icn{width:20px;text-align:center;font-size:15px;}
+  .nav a:hover{background:var(--bg);color:var(--accent);}
+  .nav a.active{background:linear-gradient(135deg,#fbe9ee,#fdf1f4);color:var(--accent);font-weight:700;}
+
+  .filter-panel{border-top:1px solid var(--line);padding-top:20px;}
+  .filter-panel-title{
+    font-family:'Noto Serif JP',serif;
+    font-size:15px;font-weight:700;margin-bottom:14px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .filter-panel-title::before{
+    content:"";width:4px;height:16px;border-radius:2px;
+    background:linear-gradient(var(--primary),var(--accent));
+  }
+  .filter-group{margin-bottom:20px;}
+  .filter-label{
+    font-size:12px;font-weight:700;color:var(--subtext);
+    letter-spacing:.08em;margin-bottom:8px;display:block;
+  }
+  .filter-select{
+    width:100%;padding:10px 12px;border-radius:12px;
+    border:1.5px solid var(--line);background:var(--white);
+    font-family:inherit;font-size:14px;color:var(--text);
+    appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23C4738A' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 14px center;
+    cursor:pointer;transition:border-color .2s;
+  }
+  .filter-select:focus{outline:none;border-color:var(--primary);}
+  .check-list{display:flex;flex-direction:column;gap:8px;}
+  .check-item{
+    display:flex;align-items:center;gap:9px;
+    padding:8px 10px;border-radius:10px;border:1.5px solid var(--line);
+    background:var(--white);cursor:pointer;font-size:13.5px;
+    transition:border-color .2s,background .2s;user-select:none;
+  }
+  .check-item:hover{border-color:var(--primary);}
+  .check-item input{display:none;}
+  .check-item .box{
+    width:18px;height:18px;border-radius:6px;flex-shrink:0;
+    border:1.5px solid #d9c2c9;background:#fff;
+    display:flex;align-items:center;justify-content:center;
+    transition:background .15s,border-color .15s;
+  }
+  .check-item .box::after{
+    content:"";width:9px;height:5px;
+    border-left:2px solid #fff;border-bottom:2px solid #fff;
+    transform:rotate(-45deg) translate(0,-1px);opacity:0;
+  }
+  .check-item input:checked + .box{background:var(--accent);border-color:var(--accent);}
+  .check-item input:checked + .box::after{opacity:1;}
+  .check-item input:checked ~ .lbl{color:var(--accent);font-weight:700;}
+  .check-item.type-item .badge-dot{width:8px;height:8px;border-radius:50%;margin-left:auto;}
+
+  .filter-actions{display:flex;flex-direction:column;gap:8px;margin-top:4px;}
+  .btn-apply{
+    padding:12px;border:none;border-radius:999px;
+    background:linear-gradient(135deg,var(--primary),var(--accent));
+    color:#fff;font-weight:700;font-size:14px;letter-spacing:.05em;
+    box-shadow:0 6px 16px rgba(196,115,138,.35);
+    transition:transform .15s,box-shadow .15s;
+  }
+  .btn-apply:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(196,115,138,.45);}
+  .btn-clear{
+    padding:10px;border:1.5px solid var(--line);border-radius:999px;
+    background:var(--white);color:var(--subtext);font-size:13px;font-weight:500;
+    transition:border-color .2s,color .2s;
+  }
+  .btn-clear:hover{border-color:var(--accent);color:var(--accent);}
+
+  /* ===== Main ===== */
+  .main{
+    margin-left:var(--sidebar-w);
+    flex:1;min-width:0;
+    padding:32px 36px 64px;
+  }
+  .hero-strip{
+    background:linear-gradient(120deg,#fbe9ee 0%,var(--bg2) 100%);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:22px 28px;margin-bottom:26px;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  }
+  .hero-strip h1{font-size:22px;font-weight:700;letter-spacing:.03em;}
+  .hero-strip p{font-size:13px;color:var(--subtext);margin-top:2px;}
+  .hero-cta{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:11px 20px;border-radius:999px;text-decoration:none;
+    background:var(--white);border:1.5px solid var(--primary);
+    color:var(--accent);font-weight:700;font-size:13.5px;
+    box-shadow:var(--shadow);transition:background .2s;white-space:nowrap;
+  }
+  .hero-cta:hover{background:#fdf1f4;}
+
+  .results-header{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:16px;margin-bottom:18px;flex-wrap:wrap;
+  }
+  .results-count{font-size:14px;color:var(--subtext);}
+  .results-count strong{
+    font-family:'Noto Serif JP',serif;
+    font-size:26px;color:var(--accent);margin:0 4px;
+  }
+  .sort-wrap{display:flex;align-items:center;gap:10px;}
+  .sort-wrap label{font-size:13px;color:var(--subtext);}
+  .sort-select{
+    padding:9px 36px 9px 14px;border-radius:999px;
+    border:1.5px solid var(--line);background:var(--white);
+    font-family:inherit;font-size:13.5px;color:var(--text);appearance:none;cursor:pointer;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23C4738A' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 14px center;
+  }
+  .sort-select:focus{outline:none;border-color:var(--primary);}
+
+  .active-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;min-height:0;}
+  .chip{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:5px 12px;border-radius:999px;font-size:12px;font-weight:500;
+    background:#fbe9ee;color:var(--accent);border:1px solid var(--line);
+  }
+  .chip button{border:none;background:none;color:var(--accent);font-size:13px;line-height:1;padding:0;}
+
+  /* ===== Cards ===== */
+  .card-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:22px;
+  }
+  .card{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:var(--shadow);
+    display:flex;flex-direction:column;
+    transition:transform .2s,box-shadow .2s;
+  }
+  .card:hover{transform:translateY(-4px);box-shadow:0 12px 28px rgba(196,115,138,.18);}
+  .card-photo{
+    height:150px;position:relative;
+    display:flex;align-items:center;justify-content:center;
+    color:#c9a3ad;font-size:34px;
+  }
+  .ph-a{background:linear-gradient(135deg,#fbe3e9,#f6d7de);}
+  .ph-b{background:linear-gradient(135deg,#f6ece2,#f0e0d2);}
+  .ph-c{background:linear-gradient(135deg,#eee7f2,#e4d9ec);}
+  .avail{
+    position:absolute;top:12px;left:12px;
+    padding:4px 12px;border-radius:999px;font-size:11.5px;font-weight:700;
+    background:rgba(255,255,255,.95);
+  }
+  .avail.ok{color:#2e8b6e;}
+  .avail.ok::before{content:"● ";font-size:9px;}
+  .avail.few{color:#c98a2e;}
+  .avail.few::before{content:"● ";font-size:9px;}
+  .fav{
+    position:absolute;top:10px;right:10px;
+    width:34px;height:34px;border-radius:50%;border:none;
+    background:rgba(255,255,255,.95);color:var(--primary);font-size:15px;
+    display:flex;align-items:center;justify-content:center;
+    transition:transform .15s;
+  }
+  .fav:hover{transform:scale(1.12);color:var(--accent);}
+  .card-body{padding:16px 18px 18px;display:flex;flex-direction:column;flex:1;}
+  .type-badge{
+    align-self:flex-start;
+    padding:3px 11px;border-radius:999px;
+    font-size:11px;font-weight:700;letter-spacing:.05em;margin-bottom:8px;
+  }
+  .type-stay{background:#fbe9ee;color:var(--accent);}
+  .type-day{background:#eef3e9;color:#5e8a4e;}
+  .type-visit{background:#e9eef6;color:#4e6a9c;}
+  .card-title{font-size:16.5px;font-weight:700;line-height:1.4;margin-bottom:4px;}
+  .card-area{font-size:12.5px;color:var(--subtext);margin-bottom:8px;}
+  .card-area::before{content:"📍 ";font-size:11px;}
+  .card-rating{display:flex;align-items:center;gap:6px;margin-bottom:10px;font-size:13px;}
+  .stars{color:#e8b64c;letter-spacing:1px;font-size:13px;}
+  .rating-num{font-weight:700;color:var(--text);}
+  .review-count{color:var(--subtext);font-size:12px;}
+  .card-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .tag{
+    font-size:11px;color:var(--subtext);
+    background:var(--bg2);border-radius:999px;padding:3px 10px;
+  }
+  .card-foot{
+    margin-top:auto;display:flex;align-items:flex-end;justify-content:space-between;gap:10px;
+    border-top:1px dashed var(--line);padding-top:12px;
+  }
+  .price{font-size:12px;color:var(--subtext);}
+  .price strong{
+    font-family:'Noto Serif JP',serif;
+    font-size:19px;color:var(--accent);
+  }
+  .price small{font-size:11px;color:var(--subtext);font-weight:400;}
+  .btn-detail{
+    padding:8px 16px;border-radius:999px;border:none;
+    background:linear-gradient(135deg,var(--primary),var(--accent));
+    color:#fff;font-size:12.5px;font-weight:700;white-space:nowrap;
+    box-shadow:0 4px 10px rgba(196,115,138,.3);
+    transition:transform .15s;
+  }
+  .btn-detail:hover{transform:translateY(-1px);}
+
+  .empty{
+    grid-column:1/-1;text-align:center;
+    padding:70px 20px;background:var(--white);
+    border:1px dashed var(--line);border-radius:var(--radius);color:var(--subtext);
+  }
+  .empty .icn{font-size:38px;display:block;margin-bottom:10px;}
+  .empty p{font-size:14px;}
+
+  /* ===== Drawer (mobile filter) ===== */
+  .drawer-toggle{
+    display:none;
+    position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+    z-index:300;
+    padding:13px 28px;border:none;border-radius:999px;
+    background:linear-gradient(135deg,var(--primary),var(--accent));
+    color:#fff;font-weight:700;font-size:14px;letter-spacing:.05em;
+    box-shadow:0 8px 24px rgba(196,115,138,.45);
+    align-items:center;gap:8px;
+  }
+  .overlay{
+    display:none;position:fixed;inset:0;z-index:150;
+    background:rgba(45,49,66,.4);backdrop-filter:blur(2px);
+  }
+  .overlay.show{display:block;}
+
+  @media (max-width:1400px){
+    .card-grid{grid-template-columns:repeat(2,1fr);}
+  }
+  @media (max-width:1024px){
+    .sidebar{
+      transform:translateX(-100%);
+      transition:transform .3s ease;
+      width:min(320px,86vw);
+      box-shadow:none;
+    }
+    .sidebar.open{
+      transform:translateX(0);
+      z-index:200;
+      box-shadow:12px 0 40px rgba(45,49,66,.18);
+    }
+    .main{margin-left:0;padding:24px 20px 100px;}
+    .drawer-toggle{display:inline-flex;}
+    .drawer-close{
+      display:flex !important;
+      position:absolute;top:18px;right:16px;
+      width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);
+      background:var(--white);color:var(--subtext);font-size:15px;
+      align-items:center;justify-content:center;
+    }
+  }
+  .drawer-close{display:none;border:none;}
+  @media (max-width:640px){
+    .card-grid{grid-template-columns:1fr;}
+    .hero-strip{padding:18px 20px;}
+    .hero-strip h1{font-size:19px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ===== Sidebar : nav + filter panel ===== -->
+  <aside class="sidebar" id="sidebar" aria-label="ナビゲーションと検索フィルタ">
+    <button class="drawer-close" id="drawerClose" aria-label="フィルタを閉じる">✕</button>
+
+    <div class="brand">
+      <div class="brand-mark">❀</div>
+      <div class="brand-name">産後ケアナビ</div>
+    </div>
+    <p class="brand-tagline">産後のあなたへ、最適なケアを。</p>
+
+    <nav class="nav" aria-label="主要ナビゲーション">
+      <a href="#"><span class="icn">🏠</span>ホーム</a>
+      <a href="#" class="active"><span class="icn">🔍</span>施設を探す</a>
+      <a href="#"><span class="icn">💰</span>公費シミュレーター</a>
+      <a href="#"><span class="icn">💬</span>FAQ</a>
+      <a href="#"><span class="icn">✉️</span>お問い合わせ</a>
+    </nav>
+
+    <div class="filter-panel">
+      <div class="filter-panel-title">条件をしぼって探す</div>
+
+      <div class="filter-group">
+        <label class="filter-label" for="areaSelect">エリア</label>
+        <select class="filter-select" id="areaSelect">
+          <option value="">すべてのエリア</option>
+          <option value="世田谷区">東京都 世田谷区</option>
+          <option value="杉並区">東京都 杉並区</option>
+          <option value="横浜市">神奈川県 横浜市</option>
+          <option value="武蔵野市">東京都 武蔵野市</option>
+          <option value="川崎市">神奈川県 川崎市</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">ケア種別</span>
+        <div class="check-list" id="typeFilters">
+          <label class="check-item type-item">
+            <input type="checkbox" value="宿泊型"><span class="box"></span>
+            <span class="lbl">宿泊型（ショートステイ）</span>
+            <span class="badge-dot" style="background:#E8A5B0;"></span>
+          </label>
+          <label class="check-item type-item">
+            <input type="checkbox" value="通所型"><span class="box"></span>
+            <span class="lbl">通所型（デイケア）</span>
+            <span class="badge-dot" style="background:#9dbb8a;"></span>
+          </label>
+          <label class="check-item type-item">
+            <input type="checkbox" value="訪問型"><span class="box"></span>
+            <span class="lbl">訪問型（アウトリーチ）</span>
+            <span class="badge-dot" style="background:#8fa5c9;"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">こだわり条件</span>
+        <div class="check-list" id="featureFilters">
+          <label class="check-item"><input type="checkbox" value="母乳ケア"><span class="box"></span><span class="lbl">母乳ケア・授乳相談</span></label>
+          <label class="check-item"><input type="checkbox" value="メンタルケア"><span class="box"></span><span class="lbl">メンタルケア</span></label>
+          <label class="check-item"><input type="checkbox" value="多胎児対応"><span class="box"></span><span class="lbl">多胎児（双子など）対応</span></label>
+          <label class="check-item"><input type="checkbox" value="上の子同伴可"><span class="box"></span><span class="lbl">上の子同伴可</span></label>
+          <label class="check-item"><input type="checkbox" value="公費助成対象"><span class="box"></span><span class="lbl">公費助成対象</span></label>
+        </div>
+      </div>
+
+      <div class="filter-actions">
+        <button class="btn-apply" id="applyBtn">この条件で検索する</button>
+        <button class="btn-clear" id="clearBtn">条件をクリア</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="overlay" id="overlay"></div>
+
+  <!-- ===== Main ===== -->
+  <main class="main">
+
+    <div class="hero-strip">
+      <div>
+        <h1>産後ケア施設を探す</h1>
+        <p>宿泊型・通所型・訪問型から、あなたに合ったケアが見つかります。</p>
+      </div>
+      <a class="hero-cta" href="#">💰 公費助成シミュレーターで自己負担額をチェック →</a>
+    </div>
+
+    <div class="results-header">
+      <div class="results-count" aria-live="polite">検索結果<strong id="countNum">9</strong>件</div>
+      <div class="sort-wrap">
+        <label for="sortSelect">並び替え</label>
+        <select class="sort-select" id="sortSelect">
+          <option value="recommend">おすすめ順</option>
+          <option value="rating">評価が高い順</option>
+          <option value="price-asc">料金が安い順</option>
+          <option value="price-desc">料金が高い順</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="active-chips" id="activeChips" aria-live="polite"></div>
+
+    <section class="card-grid" id="cardGrid" aria-label="施設一覧">
+
+      <article class="card" data-area="世田谷区" data-type="宿泊型" data-features="母乳ケア,公費助成対象,上の子同伴可" data-rating="4.8" data-price="8000" data-recommend="1">
+        <div class="card-photo ph-a"><span>🏥</span><span class="avail ok">空きあり</span><button class="fav" aria-label="お気に入りに追加">♡</button></div>
+        <div class="card-body">
+          <span class="type-badge type-stay">宿泊型</span>
+          <h2 class="card-title">マミーズハウス成城</h2>
+          <p class="card-area">東京都 世田谷区成城</p>
+          <div class="card-rating"><span class="stars">★★★★★</span><span class="rating-num">4.8</span><span class="review-count">（126件）</span></div>
+          <div class="card-tags"><span class="tag">母乳ケア</span><span class="tag">上の子同伴可</span><span class="tag">公費助成対象</span></div>
+          <div class="card-foot">
+            <div class="price"><small>1泊</small> <strong>¥8,000</strong><small>〜（助成適用時）</small></div>
+            <button class="btn-detail">詳細を見る</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-area="杉並区" data-type="通所型" data-features="母乳ケア,メンタルケア,公費助成対象" data-rating="4.6" data-price="3000" data-recommend="2">
+        <div class="card-photo ph-b"><span>🌿</span><span class="avail ok">空きあり</span><button class="fav" aria-label="お気に入りに追加">♡</button></div>
+        <div class="card-body">
+          <span class="type-badge type-day">通所型</span>
+          <h2 class="card-title">杉並産後ケアセンター こもれび</h2>
+          <p class="card-area">東京都 杉並区阿佐谷</p>
+          <div class="card-rating"><span class="stars">★★★★☆</span><span class="rating-num">4.6</span><span class="review-count">（89件）</span></div>
+          <div class="card-tags"><span class="tag">母乳ケア</span><span class="tag">メンタルケア</span><span class="tag">公費助成対象</span></div>
+          <div class="card-foot">
+            <div class="price"><small>1日</small> <strong>¥3,000</strong><small>〜（助成適用時）</small></div>
+            <button class="btn-detail">詳細を見る</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-area="横浜市" data-type="訪問型" data-features="母乳ケア,多胎児対応" data-rating="4.9" data-price="5500" data-recommend="3">
+        <div class="card-photo ph-c"><span>🏠</span><span class="avail few">残りわずか</span><button class="fav" aria-label="お気に入りに追加">♡</button></div>
+        <div class="card-body">
+          <span class="type-badge type-visit">訪問型</span>
+          <h2 class="card-title">よこはま助産師ステーション ゆりかご</h2>
+          <p class="card-area">神奈川県 横浜市港北区</p>
+          <div class="card-rating"><span class="stars">★★★★★</span><span class="rating-num">4.9</span><span class="review-count">（204件）</span></div>
+          <div class="card-tags"><span class="tag">母乳ケア</span><span class="tag">多胎児対応</span></div>
+          <div class="card-foot">
+            <div class="price"><small>1回</small> <strong>¥5,500</strong><small>〜</small></div>
+            <button class="btn-detail">詳細を見る</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-area="武蔵野市" data-type="宿泊型" data-features="メンタルケア,公費助成対象" data-rating="4.5" data-price="12000" data-recommend="4">
+        <div class="card-photo ph-b"><span>🛏️</span><span class="avail ok">空きあり</span><button class="fav" aria-label="お気に入りに追加">♡</button></div>
+        <div class="card-body">
+          <span class="type-badge type-stay">宿泊型</span>
+          <h2 class="card-title">吉祥寺レディースクリニック 産後ケア棟</h2>
+          <p class="card-area">東京都 武蔵野市吉祥寺</p>
+          <div class="card-rating"><span class="stars">★★★★☆</span><span class="rating-num">4.5</span><span class="review-count">（67件）</span></div>
+          <div class="card-tags"><span class="tag">メンタルケア</span><span class="tag">公費助成対象</span></div>
+          <div class="card-foot">
+            <div class="price"><small>1泊</small> <strong>¥12,000</strong><small>〜（助成適用時）</small></div>
+            <button class="btn-detail">詳細を見る</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-area="世田谷区" data-type="通所型" data-features="多胎児対応,上の子同伴可,公費助成対象" data-rating="4.3" data-price="2500" data-recommend="5">
+        <div class="card-photo ph-a"><span>🍼</span><span class="avail ok">空きあり</span><button class="fav" aria-label="お気に入りに追加">♡</button></div>
+        <div class="card-body">
+          <span class="type-badge type-day">通所型</span>
+          <h2 class="card-title">せたがや母子デイケア にこにこルーム</h2>
+          <p class="card-area">東京都 世田谷区三軒茶屋</p>
+          <div class="card-rating"><span class="stars">★★★★☆</span><span class="rating-num">4.3</span><span class="review-count">（52件）</span></div>
+          <div class="card-tags"><span class="tag">多胎児対応</span><span class="tag">上の子同伴可</span><span class="tag">公費助成対象</span></div>
+          <div class="card-foot">
+            <div class="price"><small>1日</small> <strong>¥2,500</strong><small>〜（助成適用時）</small></div>
+            <button class="btn-detail">詳細を見る</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-area="川崎市" data-type="訪問型" data-features="母乳ケア,メンタルケア,公費助成対象" data-rating="4.7" data-price="4000" data-recommend="6">
+        <div class="card-photo ph-c"><span>🤱</span><span class="avail few">残りわずか</span><button class="fav" aria-label="お気に入りに追加">♡</button></div>
+        <div class="card-body">
+          <span class="type-badge type-visit">訪問型</span>
+          <h2 class="card-title">かわさき訪問産後ケア はぐくみ</h2>
+          <p class="card-area">神奈川県 川崎市中原区</p>
+          <div class="card-rating"><span class="stars">★★★★★</span><span class="rating-num">4.7</span><span class="review-count">（113件）</span></div>
+          <div class="card-tags"><span class="tag">母乳ケア</span><span class="tag">メンタルケア</span><span class="tag">公費助成対象</span></div>
+          <div class="card-foot">
+            <div class="price"><small>1回</small> <strong>¥4,000</strong><small>〜（助成適用時）</small></div>
+            <button class="btn-detail">詳細を見る</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-area="横浜市" data-type="宿泊型" data-features="母乳ケア,多胎児対応,公費助成対象" data-rating="4.4" data-price="9500" data-recommend="7">
+        <div class="card-photo ph-b"><span>🌸</span><span class="avail ok">空きあり</span><button class="fav" aria-label="お気に入りに追加">♡</button></div>
+        <div class="card-body">
+          <span class="type-badge type-stay">宿泊型</span>
+          <h2 class="card-title">横浜バースケアハウス さくら</h2>
+          <p class="card-area">神奈川県 横浜市青葉区</p>
+          <div class="card-rating"><span class="stars">★★★★☆</span><span class="rating-num">4.4</span><span class="review-count">（78件）</span></div>
+          <div class="card-tags"><span class="tag">母乳ケア</span><span class="tag">多胎児対応</span><span class="tag">公費助成対象</span></div>
+          <div class="card-foot">
+            <div class="price"><small>1泊</small> <strong>¥9,500</strong><small>〜（助成適用時）</small></div>
+            <button class="btn-detail">詳細を見る</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-area="杉並区" data-type="宿泊型" data-features="メンタルケア,上の子同伴可" data-rating="4.2" data-price="15000" data-recommend="8">
+        <div class="card-photo ph-a"><span>🕊️</span><span class="avail few">残りわずか</span><button class="fav" aria-label="お気に入りに追加">♡</button></div>
+        <div class="card-body">
+          <span class="type-badge type-stay">宿泊型</span>
+          <h2 class="card-title">荻窪マタニティケアホーム そら</h2>
+          <p class="card-area">東京都 杉並区荻窪</p>
+          <div class="card-rating"><span class="stars">★★★★☆</span><span class="rating-num">4.2</span><span class="review-count">（41件）</span></div>
+          <div class="card-tags"><span class="tag">メンタルケア</span><span class="tag">上の子同伴可</span></div>
+          <div class="card-foot">
+            <div class="price"><small>1泊</small> <strong>¥15,000</strong><small>〜</small></div>
+            <button class="btn-detail">詳細を見る</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-area="武蔵野市" data-type="通所型" data-features="母乳ケア,公費助成対象" data-rating="4.6" data-price="3500" data-recommend="9">
+        <div class="card-photo ph-c"><span>☀️</span><span class="avail ok">空きあり</span><button class="fav" aria-label="お気に入りに追加">♡</button></div>
+        <div class="card-body">
+          <span class="type-badge type-day">通所型</span>
+          <h2 class="card-title">むさしのデイケア ひだまり</h2>
+          <p class="card-area">東京都 武蔵野市境南町</p>
+          <div class="card-rating"><span class="stars">★★★★☆</span><span class="rating-num">4.6</span><span class="review-count">（95件）</span></div>
+          <div class="card-tags"><span class="tag">母乳ケア</span><span class="tag">公費助成対象</span></div>
+          <div class="card-foot">
+            <div class="price"><small>1日</small> <strong>¥3,500</strong><small>〜（助成適用時）</small></div>
+            <button class="btn-detail">詳細を見る</button>
+          </div>
+        </div>
+      </article>
+
+      <div class="empty" id="emptyState" hidden>
+        <span class="icn">🔍</span>
+        <p>条件に合う施設が見つかりませんでした。<br>条件を変更して、もう一度お試しください。</p>
+      </div>
+
+    </section>
+  </main>
+</div>
+
+<button class="drawer-toggle" id="drawerToggle">🔍 条件をしぼる</button>
+
+<script>
+(function(){
+  var grid = document.getElementById('cardGrid');
+  var cards = Array.prototype.slice.call(grid.querySelectorAll('.card'));
+  var areaSelect = document.getElementById('areaSelect');
+  var sortSelect = document.getElementById('sortSelect');
+  var typeChecks = document.querySelectorAll('#typeFilters input');
+  var featChecks = document.querySelectorAll('#featureFilters input');
+  var countNum = document.getElementById('countNum');
+  var emptyState = document.getElementById('emptyState');
+  var chipsWrap = document.getElementById('activeChips');
+
+  function checkedValues(nodes){
+    return Array.prototype.filter.call(nodes, function(n){return n.checked;})
+      .map(function(n){return n.value;});
+  }
+
+  function applyFilters(){
+    var area = areaSelect.value;
+    var types = checkedValues(typeChecks);
+    var feats = checkedValues(featChecks);
+    var visible = 0;
+
+    cards.forEach(function(card){
+      var ok = true;
+      if(area && card.dataset.area !== area) ok = false;
+      if(ok && types.length && types.indexOf(card.dataset.type) === -1) ok = false;
+      if(ok && feats.length){
+        var cf = card.dataset.features.split(',');
+        ok = feats.every(function(f){return cf.indexOf(f) !== -1;});
+      }
+      card.style.display = ok ? '' : 'none';
+      if(ok) visible++;
+    });
+
+    countNum.textContent = visible;
+    emptyState.hidden = visible !== 0;
+    renderChips(area, types, feats);
+  }
+
+  function renderChips(area, types, feats){
+    chipsWrap.innerHTML = '';
+    var items = [];
+    if(area) items.push({label:'📍 '+area, clear:function(){areaSelect.value='';}});
+    types.forEach(function(t){
+      items.push({label:t, clear:function(){uncheck(typeChecks,t);}});
+    });
+    feats.forEach(function(f){
+      items.push({label:f, clear:function(){uncheck(featChecks,f);}});
+    });
+    items.forEach(function(item){
+      var chip = document.createElement('span');
+      chip.className = 'chip';
+      chip.textContent = item.label + ' ';
+      var btn = document.createElement('button');
+      btn.textContent = '✕';
+      btn.setAttribute('aria-label', item.label + ' の条件を外す');
+      btn.addEventListener('click', function(){ item.clear(); applyFilters(); });
+      chip.appendChild(btn);
+      chipsWrap.appendChild(chip);
+    });
+  }
+
+  function uncheck(nodes, value){
+    Array.prototype.forEach.call(nodes, function(n){
+      if(n.value === value) n.checked = false;
+    });
+  }
+
+  function applySort(){
+    var mode = sortSelect.value;
+    var sorted = cards.slice().sort(function(a,b){
+      switch(mode){
+        case 'rating': return parseFloat(b.dataset.rating) - parseFloat(a.dataset.rating);
+        case 'price-asc': return parseInt(a.dataset.price,10) - parseInt(b.dataset.price,10);
+        case 'price-desc': return parseInt(b.dataset.price,10) - parseInt(a.dataset.price,10);
+        default: return parseInt(a.dataset.recommend,10) - parseInt(b.dataset.recommend,10);
+      }
+    });
+    sorted.forEach(function(card){ grid.insertBefore(card, emptyState); });
+  }
+
+  // events
+  areaSelect.addEventListener('change', applyFilters);
+  Array.prototype.forEach.call(typeChecks, function(n){ n.addEventListener('change', applyFilters); });
+  Array.prototype.forEach.call(featChecks, function(n){ n.addEventListener('change', applyFilters); });
+  sortSelect.addEventListener('change', applySort);
+
+  document.getElementById('clearBtn').addEventListener('click', function(){
+    areaSelect.value = '';
+    Array.prototype.forEach.call(typeChecks, function(n){ n.checked = false; });
+    Array.prototype.forEach.call(featChecks, function(n){ n.checked = false; });
+    applyFilters();
+  });
+
+  // favorite toggle
+  Array.prototype.forEach.call(document.querySelectorAll('.fav'), function(btn){
+    btn.addEventListener('click', function(){
+      var on = btn.textContent === '♥';
+      btn.textContent = on ? '♡' : '♥';
+      btn.style.color = on ? '' : '#C4738A';
+    });
+  });
+
+  // drawer
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.getElementById('overlay');
+  function closeDrawer(){ sidebar.classList.remove('open'); overlay.classList.remove('show'); }
+  document.getElementById('drawerToggle').addEventListener('click', function(){
+    sidebar.classList.add('open'); overlay.classList.add('show');
+  });
+  document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+  overlay.addEventListener('click', closeDrawer);
+  document.getElementById('applyBtn').addEventListener('click', function(){
+    applyFilters(); closeDrawer();
+  });
+
+  applyFilters();
+})();
+</script>
+</body>
+</html>

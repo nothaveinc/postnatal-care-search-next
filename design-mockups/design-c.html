@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>産後ケアナビ | 産後のあなたへ、最適なケアを。（C案：アプリ型ハイブリッド）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary:#E8A5B0;
+    --accent:#C4738A;
+    --text:#2D3142;
+    --sub:#5C6280;
+    --bg:#fdf6f8;
+    --bg2:#F8F4F0;
+    --white:#ffffff;
+    --line:#F0DFE4;
+    --shadow:0 6px 24px rgba(196,115,138,.10);
+    --radius:20px;
+    --rail-w:76px;
+    --rail-w-open:232px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family:'Noto Sans JP',sans-serif;
+    color:var(--text);
+    background:var(--bg);
+    -webkit-font-smoothing:antialiased;
+    font-size:15px;
+    line-height:1.7;
+  }
+  h1,h2,h3,.serif{font-family:'Noto Serif JP',serif}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  ::selection{background:var(--primary);color:#fff}
+
+  /* ========== レイアウト ========== */
+  .app{display:flex;min-height:100vh}
+
+  /* ========== 左レール ========== */
+  .rail{
+    position:fixed;inset:0 auto 0 0;z-index:50;
+    width:var(--rail-w);
+    background:var(--white);
+    border-right:1px solid var(--line);
+    display:flex;flex-direction:column;
+    padding:14px 12px;
+    transition:width .25s ease;
+    overflow:hidden;
+    white-space:nowrap;
+  }
+  .rail:hover, .rail.open{width:var(--rail-w-open)}
+  .rail-logo{
+    display:flex;align-items:center;gap:12px;
+    padding:8px 4px 20px;
+  }
+  .rail-logo .mark{
+    flex:0 0 44px;width:44px;height:44px;border-radius:14px;
+    background:linear-gradient(135deg,var(--primary),var(--accent));
+    display:grid;place-items:center;color:#fff;
+    box-shadow:0 4px 12px rgba(196,115,138,.35);
+  }
+  .rail-logo .name{
+    font-family:'Noto Serif JP',serif;font-weight:700;font-size:17px;
+    opacity:0;transform:translateX(-6px);transition:.25s ease;
+  }
+  .rail-logo .name small{display:block;font-family:'Noto Sans JP',sans-serif;font-weight:400;font-size:10px;color:var(--sub);letter-spacing:.06em}
+  .rail:hover .rail-logo .name, .rail.open .rail-logo .name{opacity:1;transform:none}
+
+  .rail-nav{display:flex;flex-direction:column;gap:6px;flex:1}
+  .rail-btn{
+    display:flex;align-items:center;gap:14px;
+    height:48px;border-radius:14px;padding:0 14px;
+    color:var(--sub);font-size:14px;font-weight:500;
+    transition:background .15s,color .15s;
+    position:relative;
+  }
+  .rail-btn svg{flex:0 0 22px}
+  .rail-btn .lbl{opacity:0;transform:translateX(-6px);transition:.25s ease}
+  .rail:hover .rail-btn .lbl, .rail.open .rail-btn .lbl{opacity:1;transform:none}
+  .rail-btn:hover{background:var(--bg);color:var(--accent)}
+  .rail-btn.active{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;box-shadow:0 4px 12px rgba(196,115,138,.3)}
+  .rail-btn .badge{
+    position:absolute;top:8px;left:28px;
+    min-width:16px;height:16px;border-radius:8px;padding:0 4px;
+    background:var(--accent);color:#fff;font-size:10px;font-weight:700;
+    display:grid;place-items:center;line-height:1;
+  }
+  .rail-foot{border-top:1px solid var(--line);padding-top:10px}
+  .rail-toggle{width:100%;justify-content:flex-start}
+  .rail-toggle svg{transition:transform .25s}
+  .rail.open .rail-toggle svg{transform:rotate(180deg)}
+
+  /* ========== メイン ========== */
+  .main{
+    flex:1;margin-left:var(--rail-w);
+    padding:22px clamp(16px,3.5vw,40px) 40px;
+    max-width:1280px;
+  }
+  .topbar{
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+    margin-bottom:22px;
+  }
+  .topbar h1{font-size:22px;font-weight:600;letter-spacing:.02em}
+  .topbar .tagline{font-size:12px;color:var(--sub)}
+  .topbar .spacer{flex:1}
+  .user-chip{
+    display:flex;align-items:center;gap:10px;
+    background:var(--white);border:1px solid var(--line);
+    border-radius:999px;padding:6px 14px 6px 6px;font-size:13px;color:var(--sub);
+  }
+  .user-chip .avatar{
+    width:32px;height:32px;border-radius:50%;
+    background:var(--bg2);display:grid;place-items:center;color:var(--accent);
+  }
+
+  /* セグメントコントロール */
+  .segment{
+    display:inline-flex;background:var(--white);
+    border:1px solid var(--line);border-radius:999px;padding:5px;
+    box-shadow:var(--shadow);margin-bottom:22px;
+  }
+  .segment button{
+    display:flex;align-items:center;gap:8px;
+    padding:9px 22px;border-radius:999px;
+    font-size:14px;font-weight:500;color:var(--sub);
+    transition:.15s;
+  }
+  .segment button.active{
+    background:linear-gradient(135deg,var(--primary),var(--accent));
+    color:#fff;box-shadow:0 3px 10px rgba(196,115,138,.35);
+  }
+
+  .view{display:none;animation:fade .3s ease}
+  .view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .card{
+    background:var(--white);border:1px solid var(--line);
+    border-radius:var(--radius);box-shadow:var(--shadow);
+  }
+
+  /* ========== ホーム ========== */
+  .hero{
+    background:linear-gradient(120deg,#fdeef2 0%,var(--bg2) 100%);
+    border:1px solid var(--line);border-radius:24px;
+    padding:clamp(24px,4vw,44px);margin-bottom:22px;
+    position:relative;overflow:hidden;
+  }
+  .hero::after{
+    content:"";position:absolute;right:-60px;top:-60px;
+    width:240px;height:240px;border-radius:50%;
+    background:radial-gradient(circle,rgba(232,165,176,.35),transparent 70%);
+  }
+  .hero h2{font-size:clamp(22px,3vw,30px);font-weight:600;line-height:1.5;margin-bottom:10px}
+  .hero p{color:var(--sub);max-width:34em;margin-bottom:20px}
+  .hero .cta-row{display:flex;gap:12px;flex-wrap:wrap;position:relative;z-index:1}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:12px 26px;border-radius:999px;font-size:14px;font-weight:700;
+    transition:.15s;
+  }
+  .btn-primary{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;box-shadow:0 6px 16px rgba(196,115,138,.35)}
+  .btn-primary:hover{transform:translateY(-2px)}
+  .btn-ghost{background:var(--white);color:var(--accent);border:1px solid var(--primary)}
+  .btn-ghost:hover{background:var(--bg)}
+
+  .home-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .home-grid .card{padding:22px}
+  .home-grid h3{font-size:16px;margin:12px 0 6px}
+  .home-grid p{font-size:13px;color:var(--sub)}
+  .icon-bubble{
+    width:48px;height:48px;border-radius:16px;background:var(--bg);
+    display:grid;place-items:center;color:var(--accent);
+  }
+
+  /* ========== 探す：2ペイン ========== */
+  .search-layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:start}
+  .map-pane{
+    position:sticky;top:22px;
+    border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);
+    background:
+      linear-gradient(rgba(232,165,176,.06),rgba(232,165,176,.06)),
+      repeating-linear-gradient(0deg,transparent 0 46px,rgba(92,98,128,.10) 46px 47px),
+      repeating-linear-gradient(90deg,transparent 0 46px,rgba(92,98,128,.10) 46px 47px),
+      var(--bg2);
+    min-height:560px;box-shadow:var(--shadow);
+  }
+  .map-pane .map-note{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    color:var(--sub);font-size:12px;text-align:center;letter-spacing:.08em;
+  }
+  .map-pane{position:sticky}
+  .map-inner{position:relative;width:100%;height:560px}
+  .pin{
+    position:absolute;transform:translate(-50%,-100%);
+    display:grid;place-items:center;cursor:pointer;
+  }
+  .pin .dot{
+    width:34px;height:34px;border-radius:50% 50% 50% 6px;
+    transform:rotate(-45deg);
+    background:var(--accent);border:3px solid #fff;
+    box-shadow:0 4px 10px rgba(45,49,66,.25);
+    display:grid;place-items:center;
+  }
+  .pin .dot span{transform:rotate(45deg);color:#fff;font-size:12px;font-weight:700}
+  .pin:hover .dot{background:var(--text)}
+  .map-search{
+    position:absolute;top:14px;left:14px;right:14px;
+    display:flex;gap:8px;
+  }
+  .map-search input{
+    flex:1;height:44px;border-radius:999px;border:1px solid var(--line);
+    padding:0 18px;font:inherit;font-size:13px;background:rgba(255,255,255,.92);
+    outline:none;
+  }
+  .map-search input:focus{border-color:var(--primary)}
+  .map-search .btn{padding:0 18px;height:44px}
+
+  .list-pane .list-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .list-pane .list-head strong{font-size:15px}
+  .chip-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .chip{
+    padding:7px 16px;border-radius:999px;font-size:12px;font-weight:500;
+    background:var(--white);border:1px solid var(--line);color:var(--sub);
+    transition:.15s;
+  }
+  .chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .chip:hover:not(.active){border-color:var(--primary);color:var(--accent)}
+
+  .facility{
+    display:grid;grid-template-columns:88px 1fr auto;gap:14px;
+    padding:16px;margin-bottom:12px;transition:.15s;
+  }
+  .facility:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(196,115,138,.16)}
+  .facility .thumb{
+    width:88px;height:88px;border-radius:16px;
+    display:grid;place-items:center;color:#fff;
+    font-family:'Noto Serif JP',serif;font-size:24px;font-weight:600;
+  }
+  .t1{background:linear-gradient(135deg,#E8A5B0,#C4738A)}
+  .t2{background:linear-gradient(135deg,#EFC3B4,#DE9B85)}
+  .t3{background:linear-gradient(135deg,#B9C8E8,#8FA3CF)}
+  .facility h3{font-size:15px;font-weight:600;line-height:1.4}
+  .facility .meta{font-size:12px;color:var(--sub);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px}
+  .tag{
+    display:inline-block;padding:2px 10px;border-radius:999px;
+    font-size:11px;font-weight:700;letter-spacing:.04em;
+  }
+  .tag.stay{background:#FBE9ED;color:var(--accent)}
+  .tag.day{background:#FBF0E9;color:#C2825F}
+  .tag.visit{background:#EDF1FA;color:#5C74B0}
+  .facility .rating{color:var(--accent);font-weight:700;font-size:13px}
+  .facility .rating .stars{color:#E9B94D;letter-spacing:1px}
+  .facility .price{font-size:13px;margin-top:6px}
+  .facility .price b{font-size:16px;color:var(--accent)}
+  .fav-btn{
+    align-self:start;width:38px;height:38px;border-radius:50%;
+    display:grid;place-items:center;color:#CBB0B7;background:var(--bg);
+    transition:.15s;
+  }
+  .fav-btn:hover{color:var(--accent)}
+  .fav-btn.on{color:#fff;background:var(--accent)}
+
+  /* ========== シミュレーター ========== */
+  .sim-layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.9fr);gap:18px;align-items:start}
+  .sim-form{padding:clamp(20px,3vw,32px)}
+  .sim-form h2{font-size:19px;margin-bottom:4px}
+  .sim-form .lead{font-size:13px;color:var(--sub);margin-bottom:22px}
+  .field{margin-bottom:18px}
+  .field label{display:block;font-size:13px;font-weight:700;margin-bottom:8px}
+  .field label .req{color:var(--accent);font-size:11px;margin-left:6px}
+  .field select,.field input[type="number"]{
+    width:100%;height:50px;border-radius:14px;border:1.5px solid var(--line);
+    padding:0 16px;font:inherit;font-size:14px;background:var(--white);color:var(--text);
+    outline:none;transition:border-color .15s;
+    appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23C4738A' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 16px center;
+  }
+  .field input[type="number"]{background-image:none}
+  .field select:focus,.field input:focus{border-color:var(--primary)}
+  .radio-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .radio-cards input{display:none}
+  .radio-cards span{
+    display:grid;place-items:center;gap:2px;text-align:center;
+    padding:14px 6px;border-radius:14px;border:1.5px solid var(--line);
+    font-size:13px;font-weight:500;color:var(--sub);cursor:pointer;transition:.15s;
+  }
+  .radio-cards span small{font-size:10px;color:var(--sub)}
+  .radio-cards input:checked + span{
+    border-color:var(--accent);background:#FBE9ED;color:var(--accent);font-weight:700;
+  }
+  .sim-result{padding:clamp(20px,3vw,28px);position:sticky;top:22px;
+    background:linear-gradient(160deg,#fff 0%,#fdeef2 100%)}
+  .sim-result h3{font-size:15px;color:var(--sub);font-family:'Noto Sans JP',sans-serif;font-weight:700;letter-spacing:.06em;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .result-figure{text-align:center;padding:10px 0 16px}
+  .result-figure .amount{font-family:'Noto Serif JP',serif;font-size:44px;font-weight:700;color:var(--accent);line-height:1.2}
+  .result-figure .amount small{font-size:16px}
+  .result-figure .per{font-size:12px;color:var(--sub)}
+  .result-rows{border-top:1px dashed var(--line);padding-top:14px;font-size:13px}
+  .result-rows div{display:flex;justify-content:space-between;padding:5px 0;color:var(--sub)}
+  .result-rows div b{color:var(--text)}
+  .result-note{
+    margin-top:14px;background:rgba(255,255,255,.75);border-radius:12px;
+    padding:12px 14px;font-size:11px;color:var(--sub);line-height:1.8;
+  }
+
+  /* ========== その他ビュー ========== */
+  .simple-view{padding:clamp(20px,3vw,32px)}
+  .simple-view h2{font-size:19px;margin-bottom:16px}
+  .faq-item{border-bottom:1px solid var(--line);padding:14px 0}
+  .faq-item summary{
+    cursor:pointer;font-weight:700;font-size:14px;list-style:none;
+    display:flex;gap:10px;align-items:baseline;
+  }
+  .faq-item summary::before{content:"Q.";color:var(--accent);font-family:'Noto Serif JP',serif;font-weight:700}
+  .faq-item p{margin-top:8px;font-size:13px;color:var(--sub);padding-left:26px}
+  .empty{
+    text-align:center;padding:48px 20px;color:var(--sub);font-size:13px;
+  }
+  .empty .icon-bubble{margin:0 auto 14px}
+
+  /* ========== ボトムナビ（モバイル） ========== */
+  .bottom-nav{
+    display:none;position:fixed;left:0;right:0;bottom:0;z-index:60;
+    background:rgba(255,255,255,.95);backdrop-filter:blur(10px);
+    border-top:1px solid var(--line);
+    padding:6px 8px calc(8px + env(safe-area-inset-bottom));
+  }
+  .bottom-nav .inner{display:grid;grid-template-columns:repeat(5,1fr)}
+  .bnav-btn{
+    display:grid;place-items:center;gap:2px;padding:6px 0;
+    font-size:10px;color:var(--sub);border-radius:14px;
+  }
+  .bnav-btn svg{width:22px;height:22px}
+  .bnav-btn.active{color:var(--accent)}
+  .bnav-btn.active .bnav-ico{
+    background:#FBE9ED;border-radius:999px;padding:3px 14px;
+  }
+  .bnav-btn .bnav-ico{display:grid;place-items:center;padding:3px 14px;transition:.15s}
+
+  /* ========== レスポンシブ ========== */
+  @media (max-width:1024px){
+    .search-layout{grid-template-columns:1fr}
+    .map-pane{position:relative;top:0;min-height:300px}
+    .map-inner{height:300px}
+    .sim-layout{grid-template-columns:1fr}
+    .sim-result{position:relative;top:0}
+    .home-grid{grid-template-columns:1fr}
+  }
+  @media (max-width:768px){
+    .rail{display:none}
+    .main{margin-left:0;padding:16px 16px 96px}
+    .bottom-nav{display:block}
+    .topbar h1{font-size:19px}
+    .segment{width:100%;justify-content:stretch}
+    .segment button{flex:1;justify-content:center;padding:9px 8px;font-size:13px}
+    .facility{grid-template-columns:64px 1fr auto}
+    .facility .thumb{width:64px;height:64px;font-size:18px}
+    .radio-cards{grid-template-columns:1fr 1fr}
+    .hero{padding:22px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== 左レール ===== -->
+  <aside class="rail" id="rail" aria-label="メインナビゲーション">
+    <div class="rail-logo">
+      <div class="mark" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C7 17 3 13.6 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5c0 4.1-4 7.5-9 11.5z"/></svg>
+      </div>
+      <div class="name">産後ケアナビ<small>SANGO CARE NAVI</small></div>
+    </div>
+
+    <nav class="rail-nav">
+      <button class="rail-btn active" data-view="home">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg>
+        <span class="lbl">ホーム</span>
+      </button>
+      <button class="rail-btn" data-view="search">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <span class="lbl">施設を探す</span>
+      </button>
+      <button class="rail-btn" data-view="simulator">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="3"/><path d="M8 6.5h8"/><path d="M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h.01M12 19h.01M16 19h.01"/></svg>
+        <span class="lbl">公費シミュレーター</span>
+      </button>
+      <button class="rail-btn" data-view="favorites">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C7 17 3 13.6 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5c0 4.1-4 7.5-9 11.5z"/></svg>
+        <span class="lbl">お気に入り</span>
+        <span class="badge">2</span>
+      </button>
+      <button class="rail-btn" data-view="faq">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.4 2.3c-.8.3-.9 1-.9 1.7"/><path d="M12 17h.01"/></svg>
+        <span class="lbl">よくある質問</span>
+      </button>
+      <button class="rail-btn" data-view="contact">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m3 7 9 6 9-6"/></svg>
+        <span class="lbl">お問い合わせ</span>
+      </button>
+    </nav>
+
+    <div class="rail-foot">
+      <button class="rail-btn rail-toggle" id="railToggle" aria-label="メニューを開閉">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+        <span class="lbl">メニューを固定</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ===== メイン ===== -->
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1 id="viewTitle">ホーム</h1>
+        <div class="tagline">産後のあなたへ、最適なケアを。</div>
+      </div>
+      <div class="spacer"></div>
+      <div class="user-chip">
+        <span class="avatar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-3.5 4.5-5 8-5s6.5 1.5 8 5"/></svg>
+        </span>
+        こんにちは、ゲストさん
+      </div>
+    </div>
+
+    <!-- セグメントコントロール（主要2機能） -->
+    <div class="segment" role="tablist" aria-label="主要機能の切り替え">
+      <button data-view="search" role="tab">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        探す
+      </button>
+      <button data-view="simulator" role="tab">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="2" width="16" height="20" rx="3"/><path d="M8 6.5h8"/><path d="M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01"/></svg>
+        シミュレーター
+      </button>
+    </div>
+
+    <!-- ===== ビュー：ホーム ===== -->
+    <section class="view active" id="view-home">
+      <div class="hero">
+        <h2>産後のあなたへ、<br>最適なケアを。</h2>
+        <p>宿泊型・通所型・訪問型の産後ケア施設をかんたん検索。お住まいの自治体の公費助成を使うと、自己負担がいくらになるかもすぐにわかります。</p>
+        <div class="cta-row">
+          <button class="btn btn-primary" data-view="search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            近くの施設を探す
+          </button>
+          <button class="btn btn-ghost" data-view="simulator">助成額をシミュレーション</button>
+        </div>
+      </div>
+      <div class="home-grid">
+        <div class="card">
+          <div class="icon-bubble">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <h3>地図からさがせる</h3>
+          <p>現在地や自宅の近くから、赤ちゃんと一緒に通いやすい施設を地図で確認できます。</p>
+        </div>
+        <div class="card">
+          <div class="icon-bubble">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/></svg>
+          </div>
+          <h3>公費助成に対応</h3>
+          <p>自治体・世帯区分・ケアの種類を選ぶだけで、公費適用後の自己負担額の目安がわかります。</p>
+        </div>
+        <div class="card">
+          <div class="icon-bubble">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C7 17 3 13.6 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5c0 4.1-4 7.5-9 11.5z"/></svg>
+          </div>
+          <h3>お気に入りで比較</h3>
+          <p>気になる施設を保存して、料金やケア内容をあとからゆっくり見比べられます。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ビュー：施設を探す ===== -->
+    <section class="view" id="view-search">
+      <div class="search-layout">
+        <div class="map-pane">
+          <div class="map-inner">
+            <div class="map-note">MAP PLACEHOLDER<br>（地図がここに表示されます）</div>
+            <div class="pin" style="left:32%;top:38%"><div class="dot"><span>1</span></div></div>
+            <div class="pin" style="left:55%;top:52%"><div class="dot"><span>2</span></div></div>
+            <div class="pin" style="left:44%;top:70%"><div class="dot"><span>3</span></div></div>
+            <div class="pin" style="left:70%;top:32%"><div class="dot"><span>4</span></div></div>
+            <div class="pin" style="left:62%;top:78%"><div class="dot"><span>5</span></div></div>
+            <div class="map-search">
+              <input type="text" placeholder="エリア・駅名・施設名で検索（例：世田谷区）">
+              <button class="btn btn-primary">検索</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="list-pane">
+          <div class="list-head">
+            <strong>近くの施設 <span style="color:var(--accent)">5件</span></strong>
+            <span style="font-size:12px;color:var(--sub)">並び替え：おすすめ順 ▾</span>
+          </div>
+          <div class="chip-row">
+            <button class="chip active">すべて</button>
+            <button class="chip">宿泊型</button>
+            <button class="chip">通所型</button>
+            <button class="chip">訪問型</button>
+            <button class="chip">公費対象のみ</button>
+          </div>
+
+          <article class="card facility">
+            <div class="thumb t1">ま</div>
+            <div>
+              <h3>まどか助産院 産後ケアセンター</h3>
+              <div class="meta">
+                <span class="tag stay">宿泊型</span>
+                <span>東京都世田谷区</span>
+                <span class="rating"><span class="stars">★★★★★</span> 4.8</span>
+              </div>
+              <div class="price">公費適用で1泊 <b>3,000円</b> 〜（通常 30,000円〜）</div>
+            </div>
+            <button class="fav-btn on" aria-label="お気に入りに追加">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21C7 17 3 13.6 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5c0 4.1-4 7.5-9 11.5z"/></svg>
+            </button>
+          </article>
+
+          <article class="card facility">
+            <div class="thumb t2">ひ</div>
+            <div>
+              <h3>ひだまり母子ケアルーム</h3>
+              <div class="meta">
+                <span class="tag day">通所型</span>
+                <span>東京都杉並区</span>
+                <span class="rating"><span class="stars">★★★★☆</span> 4.6</span>
+              </div>
+              <div class="price">公費適用で1日 <b>2,000円</b> 〜（昼食・ケア込み）</div>
+            </div>
+            <button class="fav-btn" aria-label="お気に入りに追加">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21C7 17 3 13.6 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5c0 4.1-4 7.5-9 11.5z"/></svg>
+            </button>
+          </article>
+
+          <article class="card facility">
+            <div class="thumb t3">さ</div>
+            <div>
+              <h3>さくら訪問ケアステーション</h3>
+              <div class="meta">
+                <span class="tag visit">訪問型</span>
+                <span>東京都目黒区</span>
+                <span class="rating"><span class="stars">★★★★★</span> 4.7</span>
+              </div>
+              <div class="price">公費適用で1回 <b>1,000円</b> 〜（助産師がご自宅へ）</div>
+            </div>
+            <button class="fav-btn on" aria-label="お気に入りに追加">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21C7 17 3 13.6 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5c0 4.1-4 7.5-9 11.5z"/></svg>
+            </button>
+          </article>
+
+          <article class="card facility">
+            <div class="thumb t1">う</div>
+            <div>
+              <h3>うみとそら産後ケアハウス</h3>
+              <div class="meta">
+                <span class="tag stay">宿泊型</span>
+                <span>神奈川県横浜市</span>
+                <span class="rating"><span class="stars">★★★★☆</span> 4.5</span>
+              </div>
+              <div class="price">公費適用で1泊 <b>6,000円</b> 〜（個室・母子同室）</div>
+            </div>
+            <button class="fav-btn" aria-label="お気に入りに追加">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21C7 17 3 13.6 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5c0 4.1-4 7.5-9 11.5z"/></svg>
+            </button>
+          </article>
+
+          <article class="card facility">
+            <div class="thumb t2">こ</div>
+            <div>
+              <h3>このは助産院 デイケア</h3>
+              <div class="meta">
+                <span class="tag day">通所型</span>
+                <span>神奈川県川崎市</span>
+                <span class="rating"><span class="stars">★★★★☆</span> 4.4</span>
+              </div>
+              <div class="price">公費適用で1日 <b>2,500円</b> 〜（授乳相談つき）</div>
+            </div>
+            <button class="fav-btn" aria-label="お気に入りに追加">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21C7 17 3 13.6 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5c0 4.1-4 7.5-9 11.5z"/></svg>
+            </button>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ビュー：公費シミュレーター ===== -->
+    <section class="view" id="view-simulator">
+      <div class="sim-layout">
+        <div class="card sim-form">
+          <h2>公費助成シミュレーター</h2>
+          <p class="lead">3つの質問に答えるだけで、公費助成を使った場合の自己負担額の目安がわかります。</p>
+
+          <div class="field">
+            <label>お住まいの自治体<span class="req">必須</span></label>
+            <select id="simCity">
+              <option>東京都 世田谷区</option>
+              <option>東京都 杉並区</option>
+              <option>東京都 目黒区</option>
+              <option>神奈川県 横浜市</option>
+              <option>神奈川県 川崎市</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>利用したいケアの種類<span class="req">必須</span></label>
+            <div class="radio-cards" id="simType">
+              <label><input type="radio" name="careType" value="stay" checked><span>宿泊型<small>ショートステイ</small></span></label>
+              <label><input type="radio" name="careType" value="day"><span>通所型<small>デイケア</small></span></label>
+              <label><input type="radio" name="careType" value="visit"><span>訪問型<small>アウトリーチ</small></span></label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>利用予定日数（泊・日・回）</label>
+            <input type="number" id="simDays" value="3" min="1" max="14">
+          </div>
+
+          <div class="field">
+            <label>世帯区分</label>
+            <select id="simIncome">
+              <option value="1">住民税課税世帯</option>
+              <option value="0.5">住民税非課税世帯（自己負担 半額）</option>
+              <option value="0">生活保護世帯（自己負担 なし）</option>
+            </select>
+          </div>
+
+          <button class="btn btn-primary" id="simRun" style="width:100%;justify-content:center;height:52px;font-size:15px">
+            自己負担額を計算する
+          </button>
+        </div>
+
+        <div class="card sim-result">
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>
+            シミュレーション結果（目安）
+          </h3>
+          <div class="result-figure">
+            <div class="amount"><span id="resTotal">9,000</span><small> 円</small></div>
+            <div class="per" id="resPer">宿泊型 3泊分の自己負担額</div>
+          </div>
+          <div class="result-rows">
+            <div><span>通常料金の合計</span><b id="resFull">90,000円</b></div>
+            <div><span>公費助成額</span><b id="resSubsidy">− 81,000円</b></div>
+            <div><span>1泊・1日あたりの自己負担</span><b id="resUnit">3,000円</b></div>
+          </div>
+          <div class="result-note">
+            ※ 金額はモックアップ用の概算です。実際の助成上限日数・金額は自治体により異なります。母子健康手帳交付時の案内、または自治体窓口で最新情報をご確認ください。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ビュー：お気に入り ===== -->
+    <section class="view" id="view-favorites">
+      <div class="card simple-view">
+        <h2>お気に入りの施設</h2>
+        <p style="font-size:13px;color:var(--sub);margin-bottom:16px">保存した施設：2件。「施設を探す」のハートから追加できます。</p>
+        <article class="card facility" style="box-shadow:none">
+          <div class="thumb t1">ま</div>
+          <div>
+            <h3>まどか助産院 産後ケアセンター</h3>
+            <div class="meta"><span class="tag stay">宿泊型</span><span>東京都世田谷区</span><span class="rating"><span class="stars">★★★★★</span> 4.8</span></div>
+            <div class="price">公費適用で1泊 <b>3,000円</b> 〜</div>
+          </div>
+          <button class="fav-btn on" aria-label="お気に入りから削除"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21C7 17 3 13.6 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5c0 4.1-4 7.5-9 11.5z"/></svg></button>
+        </article>
+        <article class="card facility" style="box-shadow:none">
+          <div class="thumb t3">さ</div>
+          <div>
+            <h3>さくら訪問ケアステーション</h3>
+            <div class="meta"><span class="tag visit">訪問型</span><span>東京都目黒区</span><span class="rating"><span class="stars">★★★★★</span> 4.7</span></div>
+            <div class="price">公費適用で1回 <b>1,000円</b> 〜</div>
+          </div>
+          <button class="fav-btn on" aria-label="お気に入りから削除"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21C7 17 3 13.6 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5c0 4.1-4 7.5-9 11.5z"/></svg></button>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===== ビュー：よくある質問 ===== -->
+    <section class="view" id="view-faq">
+      <div class="card simple-view">
+        <h2>よくある質問</h2>
+        <details class="faq-item" open>
+          <summary>産後ケアは誰でも利用できますか？</summary>
+          <p>原則として、出産後1年以内のお母さんと赤ちゃんが対象です。自治体の公費助成を利用する場合は、お住まいの自治体への事前申請が必要なことがあります。</p>
+        </details>
+        <details class="faq-item">
+          <summary>公費助成はいくらくらい受けられますか？</summary>
+          <p>自治体・ケアの種類・世帯区分によって異なります。本サービスの「公費シミュレーター」で、自己負担額の目安をかんたんに確認できます。</p>
+        </details>
+        <details class="faq-item">
+          <summary>宿泊型・通所型・訪問型の違いは何ですか？</summary>
+          <p>宿泊型は施設に泊まって休養やケアを受けるタイプ、通所型は日帰りで施設に通うタイプ、訪問型は助産師などがご自宅に来てくれるタイプです。</p>
+        </details>
+        <details class="faq-item">
+          <summary>赤ちゃんと一緒に利用できますか？</summary>
+          <p>ほとんどの施設で母子同室・同伴での利用が可能です。施設詳細ページの「ケア内容」欄をご確認ください。</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- ===== ビュー：お問い合わせ ===== -->
+    <section class="view" id="view-contact">
+      <div class="card simple-view">
+        <h2>お問い合わせ</h2>
+        <div class="empty">
+          <div class="icon-bubble">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m3 7 9 6 9-6"/></svg>
+          </div>
+          サービスに関するご質問・掲載施設からのお問い合わせは<br>
+          <b style="color:var(--accent)">support@sango-care-navi.example.jp</b> までお気軽にご連絡ください。<br>
+          （モックアップのためフォームは省略しています）
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ===== ボトムナビ（モバイル） ===== -->
+<nav class="bottom-nav" aria-label="モバイルナビゲーション">
+  <div class="inner">
+    <button class="bnav-btn active" data-view="home">
+      <span class="bnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg></span>
+      ホーム
+    </button>
+    <button class="bnav-btn" data-view="search">
+      <span class="bnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span>
+      探す
+    </button>
+    <button class="bnav-btn" data-view="simulator">
+      <span class="bnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="2" width="16" height="20" rx="3"/><path d="M8 6.5h8"/><path d="M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01"/></svg></span>
+      助成額
+    </button>
+    <button class="bnav-btn" data-view="favorites">
+      <span class="bnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C7 17 3 13.6 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5c0 4.1-4 7.5-9 11.5z"/></svg></span>
+      お気に入り
+    </button>
+    <button class="bnav-btn" data-view="faq">
+      <span class="bnav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.4 2.3c-.8.3-.9 1-.9 1.7"/><path d="M12 17h.01"/></svg></span>
+      FAQ
+    </button>
+  </div>
+</nav>
+
+<script>
+(function(){
+  var titles = {
+    home:'ホーム', search:'施設を探す', simulator:'公費シミュレーター',
+    favorites:'お気に入り', faq:'よくある質問', contact:'お問い合わせ'
+  };
+
+  function switchView(view){
+    document.querySelectorAll('.view').forEach(function(v){
+      v.classList.toggle('active', v.id === 'view-' + view);
+    });
+    document.querySelectorAll('.rail-btn[data-view], .bnav-btn[data-view], .segment button[data-view]').forEach(function(b){
+      b.classList.toggle('active', b.dataset.view === view);
+    });
+    document.getElementById('viewTitle').textContent = titles[view] || '';
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  document.querySelectorAll('[data-view]').forEach(function(el){
+    el.addEventListener('click', function(){ switchView(el.dataset.view); });
+  });
+
+  /* レール開閉（クリックで固定展開） */
+  document.getElementById('railToggle').addEventListener('click', function(e){
+    e.stopPropagation();
+    document.getElementById('rail').classList.toggle('open');
+  });
+
+  /* お気に入りトグル（モック） */
+  document.querySelectorAll('.fav-btn').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      btn.classList.toggle('on');
+      var on = btn.classList.contains('on');
+      btn.innerHTML = on
+        ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21C7 17 3 13.6 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5c0 4.1-4 7.5-9 11.5z"/></svg>'
+        : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21C7 17 3 13.6 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5c0 4.1-4 7.5-9 11.5z"/></svg>';
+    });
+  });
+
+  /* フィルターチップ（モック：見た目のみ） */
+  document.querySelectorAll('.chip').forEach(function(chip){
+    chip.addEventListener('click', function(){
+      document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('active'); });
+      chip.classList.add('active');
+    });
+  });
+
+  /* 公費シミュレーター（モック計算） */
+  var PRICES = {
+    stay:  { full:30000, self:3000, unit:'泊', label:'宿泊型' },
+    day:   { full:15000, self:2000, unit:'日', label:'通所型' },
+    visit: { full:8000,  self:1000, unit:'回', label:'訪問型' }
+  };
+  function yen(n){ return n.toLocaleString('ja-JP') + '円'; }
+
+  function runSim(){
+    var type = document.querySelector('input[name="careType"]:checked').value;
+    var days = Math.max(1, parseInt(document.getElementById('simDays').value, 10) || 1);
+    var rate = parseFloat(document.getElementById('simIncome').value);
+    var p = PRICES[type];
+
+    var unitSelf = Math.round(p.self * rate);
+    var total = unitSelf * days;
+    var full = p.full * days;
+
+    document.getElementById('resTotal').textContent = total.toLocaleString('ja-JP');
+    document.getElementById('resPer').textContent = p.label + ' ' + days + p.unit + '分の自己負担額';
+    document.getElementById('resFull').textContent = yen(full);
+    document.getElementById('resSubsidy').textContent = '− ' + yen(full - total);
+    document.getElementById('resUnit').textContent = yen(unitSelf);
+  }
+  document.getElementById('simRun').addEventListener('click', runSim);
+  ['simCity','simDays','simIncome'].forEach(function(id){
+    document.getElementById(id).addEventListener('change', runSim);
+  });
+  document.querySelectorAll('input[name="careType"]').forEach(function(r){
+    r.addEventListener('change', runSim);
+  });
+})();
+</script>
+</body>
+</html>
