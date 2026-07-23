@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import SubpageHero from "@/components/SubpageHero";
 import FacilitySearch from "@/components/FacilitySearch";
 import { facilities } from "@/data/facilities";
 
@@ -28,12 +27,7 @@ export default function SearchPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
       />
-      <SubpageHero title="産後ケア施設を探す" path="/search" />
-      <div className="subpage-main">
-        <div className="container">
-          <FacilitySearch facilities={facilities} />
-        </div>
-      </div>
+      <FacilitySearch facilities={facilities} />
     </>
   );
 }

@@ -220,16 +220,331 @@
 .form-input--error { border-color: #e53935 !important; box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.12) !important; }
 .form-textarea--error { border-color: #e53935 !important; box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.12) !important; }
 
-/* ── 施設を探す：件数・並び替えバー ── */
-.facility-search__header {
+/* ── 施設を探す ── */
+.search-page {
+  --search-line: #f0dde2;
+  --search-sidebar-width: 296px;
+  min-height: calc(100vh - var(--nav-height));
+  margin-top: var(--nav-height);
+  background: #fdf6f8;
+}
+.search-sidebar {
+  position: fixed;
+  z-index: 100;
+  top: var(--nav-height);
+  bottom: 0;
+  left: 0;
+  width: var(--search-sidebar-width);
+  overflow-y: auto;
+  padding: 28px 22px 40px;
+  background: var(--color-surface);
+  border-right: 1px solid var(--search-line);
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-primary) transparent;
+}
+.search-filter-panel__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 700;
+}
+.search-filter-panel__title::before {
+  width: 4px;
+  height: 16px;
+  border-radius: 2px;
+  background: linear-gradient(var(--color-primary), var(--color-primary-dark));
+  content: "";
+}
+.search-filter-group {
+  min-width: 0;
+  margin: 0 0 20px;
+  padding: 0;
+  border: 0;
+}
+.search-filter-group.filter-group { display: flex; width: auto; }
+.search-filter-group .filter-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--color-text-medium);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+}
+.search-sidebar .filter-select {
+  width: 100%;
+  padding: 10px 36px 10px 12px;
+  border-color: var(--search-line);
+  background-color: var(--color-surface);
+  background-position: right 14px center;
+  font-size: 14px;
+}
+.search-check-list { display: flex; flex-direction: column; gap: 8px; }
+.search-check-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border: 1.5px solid var(--search-line);
+  border-radius: 10px;
+  background: var(--color-surface);
+  cursor: pointer;
+  font-size: 13.5px;
+  line-height: 1.5;
+  transition: border-color .2s, background .2s;
+  user-select: none;
+}
+.search-check-item:hover { border-color: var(--color-primary); }
+.search-check-item input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.search-check-item:focus-within {
+  border-color: var(--color-primary-dark);
+  box-shadow: 0 0 0 3px rgba(196, 115, 138, .15);
+}
+.search-check-item__box {
+  display: flex;
+  flex: 0 0 18px;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #d9c2c9;
+  border-radius: 6px;
+  background: var(--color-surface);
+}
+.search-check-item__box::after {
+  width: 9px;
+  height: 5px;
+  border-bottom: 2px solid #fff;
+  border-left: 2px solid #fff;
+  content: "";
+  opacity: 0;
+  transform: rotate(-45deg) translate(0, -1px);
+}
+.search-check-item input:checked + .search-check-item__box {
+  border-color: var(--color-primary-dark);
+  background: var(--color-primary-dark);
+}
+.search-check-item input:checked + .search-check-item__box::after { opacity: 1; }
+.search-check-item input:checked ~ .search-check-item__label { color: var(--color-primary-dark); font-weight: 700; }
+.search-check-item__dot { width: 8px; height: 8px; margin-left: auto; border-radius: 50%; }
+.search-check-item__dot--宿泊型 { background: var(--color-primary); }
+.search-check-item__dot--通所型 { background: #9dbb8a; }
+.search-check-item__dot--訪問型 { background: #8fa5c9; }
+.search-filter-actions { display: flex; flex-direction: column; gap: 8px; }
+.search-filter-actions .btn { padding: 11px 16px; font-size: 13px; }
+.search-filter-apply { background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); }
+.search-filter-clear { border-color: var(--search-line); background: var(--color-surface); color: var(--color-text-medium); }
+.search-filter-clear:disabled { cursor: default; opacity: .45; transform: none; }
+.search-main {
+  min-width: 0;
+  margin-left: var(--search-sidebar-width);
+  padding: 32px 36px 64px;
+}
+.search-hero {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  margin: 24px 0 20px;
+  margin-bottom: 26px;
+  padding: 22px 28px;
+  border: 1px solid var(--search-line);
+  border-radius: 16px;
+  background: linear-gradient(120deg, #fbe9ee 0%, var(--color-surface2) 100%);
 }
-.facility-search__sort { flex: 0 0 auto; min-width: 200px; }
+.search-hero h1 { font-family: var(--font-serif); font-size: 22px; letter-spacing: .03em; }
+.search-hero p { margin-top: 2px; color: var(--color-text-medium); font-size: 13px; }
+.search-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border: 1.5px solid var(--color-primary);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  box-shadow: 0 4px 16px rgba(196, 115, 138, .10);
+  color: var(--color-primary-dark);
+  font-size: 13.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.search-hero__cta:hover { background: #fdf1f4; }
+.search-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.search-results-header .facility-count { margin: 0; font-size: 14px; }
+.search-results-header .facility-count strong {
+  margin: 0 4px;
+  color: var(--color-primary-dark);
+  font-family: var(--font-serif);
+  font-size: 26px;
+}
+.search-sort { display: flex; align-items: center; gap: 10px; }
+.search-sort label { color: var(--color-text-medium); font-size: 13px; }
+.search-sort .filter-select {
+  width: auto;
+  padding: 9px 36px 9px 14px;
+  border-color: var(--search-line);
+  border-radius: var(--radius-full);
+  background-color: var(--color-surface);
+  font-size: 13.5px;
+}
+.search-active-chips { display: flex; min-height: 0; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.search-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid var(--search-line);
+  border-radius: var(--radius-full);
+  background: #fbe9ee;
+  color: var(--color-primary-dark);
+  font-size: 12px;
+  font-weight: 500;
+}
+.search-chip button { color: var(--color-primary-dark); font-size: 12px; line-height: 1; }
+.search-page .facility-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; padding: 0; }
+.search-page .facility-card { border-color: var(--search-line); border-radius: 16px; box-shadow: 0 4px 16px rgba(196, 115, 138, .10); }
+.search-page .facility-card:hover { box-shadow: 0 12px 28px rgba(196, 115, 138, .18); }
+.search-page .facility-card__img { height: 150px; aspect-ratio: auto; color: #c9a3ad; font-size: 34px; }
+.search-page .search-photo--a { background: linear-gradient(135deg, #fbe3e9, #f6d7de); }
+.search-page .search-photo--b { background: linear-gradient(135deg, #f6ece2, #f0e0d2); }
+.search-page .search-photo--c { background: linear-gradient(135deg, #eee7f2, #e4d9ec); }
+.search-page .availability-badge { position: absolute; top: 12px; left: 12px; background: rgba(255,255,255,.95); }
+.search-favorite {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.95);
+  color: var(--color-primary);
+  font-size: 17px;
+  transition: color .15s, transform .15s;
+}
+.search-favorite:hover { color: var(--color-primary-dark); transform: scale(1.12); }
+.search-favorite.is-favorite { color: var(--color-primary-dark); }
+.search-page .facility-card__body { gap: 0; padding: 16px 18px 18px; }
+.search-page .facility-card__type {
+  align-self: flex-start;
+  margin-bottom: 8px;
+  padding: 3px 11px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .05em;
+}
+.search-page .search-care-type--宿泊型 { background: #fbe9ee; color: var(--color-primary-dark); }
+.search-page .search-care-type--通所型 { background: #eef3e9; color: #5e8a4e; }
+.search-page .search-care-type--訪問型 { background: #e9eef6; color: #4e6a9c; }
+.search-page .facility-card__name { margin-bottom: 4px; font-family: var(--font-serif); font-size: 16.5px; }
+.search-page .facility-card__location { margin-bottom: 8px; font-size: 12.5px; }
+.search-page .facility-card__rating { margin-bottom: 10px; }
+.search-page .tags { gap: 6px; margin-bottom: 14px; }
+.search-page .tag { padding: 3px 10px; background: var(--color-surface2); color: var(--color-text-medium); font-size: 11px; }
+.search-page .facility-card__footer {
+  align-items: flex-end;
+  flex-wrap: nowrap;
+  margin-top: auto;
+  padding: 12px 0 0;
+  border-top: 1px dashed var(--search-line);
+}
+.search-page .facility-card__price { margin: 0; font-size: 12px; font-weight: 400; }
+.search-page .facility-card__price strong { color: var(--color-primary-dark); font-family: var(--font-serif); font-size: 19px; }
+.search-page .facility-card__price small { font-size: 11px; font-weight: 400; }
+.search-page .facility-card__detail-btn { align-self: auto; margin: 0; padding: 8px 16px; font-size: 12.5px; }
+.search-page .facility-empty {
+  padding: 70px 20px;
+  border: 1px dashed var(--search-line);
+  border-radius: 16px;
+  background: var(--color-surface);
+}
+.search-page .facility-empty > span { display: block; margin-bottom: 10px; font-size: 38px; }
+.search-page .facility-empty p { font-size: 14px; }
+.search-drawer-toggle, .search-drawer-close, .search-overlay { display: none; }
+
+@media (max-width: 1400px) {
+  .search-page .facility-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 1024px) {
+  .search-sidebar {
+    z-index: 1200;
+    width: min(320px, 86vw);
+    box-shadow: none;
+    transform: translateX(-100%);
+    transition: transform .3s ease, box-shadow .3s ease;
+  }
+  .search-sidebar.is-open { box-shadow: 12px 0 40px rgba(45,49,66,.18); transform: translateX(0); }
+  .search-main { margin-left: 0; padding: 24px 20px 100px; }
+  .search-drawer-toggle {
+    position: fixed;
+    z-index: 1300;
+    bottom: 22px;
+    left: 50%;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 28px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    box-shadow: 0 8px 24px rgba(196,115,138,.45);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    transform: translateX(-50%);
+  }
+  .search-drawer-close {
+    position: absolute;
+    top: 18px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: 1.5px solid var(--search-line);
+    border-radius: 50%;
+    background: var(--color-surface);
+    color: var(--color-text-medium);
+  }
+  .search-overlay {
+    position: fixed;
+    z-index: 1100;
+    inset: var(--nav-height) 0 0;
+    display: block;
+    visibility: hidden;
+    background: rgba(45,49,66,.4);
+    opacity: 0;
+    cursor: default;
+    transition: opacity .3s ease, visibility .3s ease;
+    backdrop-filter: blur(2px);
+  }
+  .search-overlay.is-visible { visibility: visible; opacity: 1; }
+}
+@media (max-width: 640px) {
+  .search-page .facility-grid { grid-template-columns: 1fr; }
+  .search-hero { padding: 18px 20px; }
+  .search-hero h1 { font-size: 19px; }
+  .search-hero__cta { max-width: 100%; white-space: normal; }
+}
 
 /* ── 施設詳細ページ ── */
 .facility-detail__top {
