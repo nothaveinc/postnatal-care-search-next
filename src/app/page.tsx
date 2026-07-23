@@ -66,7 +66,7 @@ export default function Home() {
             住所・世帯状況・赤ちゃんの月齢を入力するだけで、あなたにぴったりの産後ケアと公費助成を即座にご提案します。
           </p>
           <div className="hero__actions">
-            <Link href="/#facility" className="btn btn--primary">
+            <Link href="/search" className="btn btn--primary">
               施設を探す
             </Link>
             <Link href="/#subsidy" className="btn btn--outline">
@@ -153,7 +153,7 @@ export default function Home() {
       </section>
 
       {/* Facility Section */}
-      <section className="facility" id="facility">
+      <section className="facility">
         <div className="container">
           <div className="section-header">
             <span className="section-tag">STEP 2</span>
@@ -162,8 +162,14 @@ export default function Home() {
               あなたの条件に合った産後ケア施設を探しましょう。
             </p>
           </div>
-          {/* TODO: facility.js のReact移植（FacilitySearchコンポーネント） */}
-          <div id="facilityApp"></div>
+          <div className="facility-teaser">
+            <p className="facility-teaser__text">
+              宿泊型・通所型・訪問型から、エリアやこだわり条件で絞り込んで施設を比較できます。空き状況や口コミ、料金もまとめてチェックできます。
+            </p>
+            <Link href="/search" className="btn btn--primary">
+              施設を探す →
+            </Link>
+          </div>
         </div>
       </section>
 

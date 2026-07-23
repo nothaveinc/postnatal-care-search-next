@@ -21,7 +21,7 @@ export default function Footer() {
                 <Link href="/#subsidy">公費シミュレーター</Link>
               </li>
               <li>
-                <Link href="/#facility">施設を探す</Link>
+                <Link href="/search">施設を探す</Link>
               </li>
             </ul>
           </div>

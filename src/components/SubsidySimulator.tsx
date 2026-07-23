@@ -393,7 +393,7 @@ export default function SubsidySimulator() {
               )}
 
               <div className="result-card__footer">
-                <Link href="/#facility" className="btn btn--primary">
+                <Link href="/search" className="btn btn--primary">
                   施設を探す
                 </Link>
               </div>

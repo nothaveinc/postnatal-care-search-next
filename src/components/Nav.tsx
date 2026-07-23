@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 const links = [
   { href: "/#subsidy", label: "公費シミュレーター" },
-  { href: "/#facility", label: "施設を探す" },
+  { href: "/search", label: "施設を探す" },
   { href: "/#about", label: "このサービスについて" },
 ];
 
