@@ -2,9 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import SubpageHero from "@/components/SubpageHero";
-import { getFacilityById } from "@/data/facilities";
+import { facilities, getFacilityById } from "@/data/facilities";
 
 type Params = { id: string };
+
+export function generateStaticParams(): Params[] {
+  return facilities.map((facility) => ({ id: facility.id }));
+}
 
 function StarRating({ rating }: { rating: number }) {
   const rounded = Math.round(rating);
